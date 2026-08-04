@@ -1,0 +1,40 @@
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${DB_SA_PASSWORD}
+      MSSQL_PID: Express
+    volumes:
+      - db-data:/var/opt/mssql
+    restart: unless-stopped
+
+  backend:
+    build: ./backend
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__Default: "Server=db,1433;Database=MhdLegal;User Id=sa;Password=${DB_SA_PASSWORD};TrustServerCertificate=True"
+      Jwt__Key: ${JWT_KEY}
+      Jwt__Issuer: ${JWT_ISSUER:-mhd-legal}
+      Jwt__Audience: ${JWT_AUDIENCE:-mhd-legal-client}
+      Security__FieldEncryptionKey: ${STORAGE_KEY}
+      Cors__AllowedOrigins__0: ${PUBLIC_ORIGIN}
+      Seed__ManagerEmail: ${MANAGER_EMAIL}
+      Seed__ManagerPassword: ${MANAGER_TEMP_PASSWORD}
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - ./certs:/etc/nginx/certs:ro
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  db-data:
