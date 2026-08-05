@@ -68,3 +68,102 @@ export interface AuditEntry {
   ipAddress: string
   timestamp: string
 }
+
+export interface DocumentMeta {
+  id: string
+  fileName: string
+  contentType: string
+  sizeBytes: number
+  isArchived: boolean
+  uploadedAt: string
+}
+
+export type AppointmentType = 'Hearing' | 'Meeting' | 'Deadline' | 'Other'
+
+export interface Appointment {
+  id: string
+  title: string
+  type: AppointmentType
+  caseId?: string | null
+  case?: CaseItem | null
+  startAt: string
+  endAt?: string | null
+  location?: string | null
+  notes?: string | null
+  reminderMinutesBefore?: number | null
+  assignedUserId: string
+  assignedUser?: AuthUser | null
+  isCancelled: boolean
+  createdAt: string
+}
+
+export type LegalReferenceType = 'Law' | 'Regulation' | 'Decision' | 'Circular' | 'Other'
+
+export interface LegalReference {
+  id: string
+  title: string
+  type: LegalReferenceType
+  issuingAuthority?: string | null
+  issueDate?: string | null
+  referenceNumber?: string | null
+  summary?: string | null
+  sourceUrl?: string | null
+  createdAt: string
+}
+
+export interface TimeEntry {
+  id: string
+  caseId: string
+  case?: CaseItem | null
+  lawyerId: string
+  lawyer?: AuthUser | null
+  workDate: string
+  hours: number
+  description: string
+  isBilled: boolean
+  createdAt: string
+}
+
+export type InvoiceStatus = 'Draft' | 'Issued' | 'Paid' | 'Cancelled'
+
+export interface InvoiceLine {
+  id: string
+  description: string
+  quantity: number
+  unitPrice: number
+  lineTotal: number
+}
+
+export interface Invoice {
+  id: string
+  invoiceNumber?: string | null
+  clientId: string
+  client?: Client | null
+  caseId?: string | null
+  case?: CaseItem | null
+  status: InvoiceStatus
+  issueDate: string
+  subtotal: number
+  vatRate: number
+  vatAmount: number
+  total: number
+  sellerName?: string | null
+  sellerVatNumber?: string | null
+  qrCodeTlvBase64?: string | null
+  paidAt?: string | null
+  paidAmount?: number | null
+  createdAt: string
+  lines: InvoiceLine[]
+}
+
+export interface OfficeSettingsData {
+  id: string
+  firmName: string
+  vatNumber?: string | null
+  commercialRegistrationNumber?: string | null
+  address?: string | null
+  phone?: string | null
+  email?: string | null
+  defaultVatRate: number
+  updatedAt: string
+}

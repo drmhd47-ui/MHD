@@ -30,6 +30,11 @@ public static class DbSeeder
             IsActive = true
         });
 
+        if (!await db.OfficeSettings.AnyAsync())
+        {
+            db.OfficeSettings.Add(new OfficeSettings());
+        }
+
         await db.SaveChangesAsync();
     }
 }

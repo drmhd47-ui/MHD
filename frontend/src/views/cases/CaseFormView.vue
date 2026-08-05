@@ -3,6 +3,8 @@ import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import api, { apiErrorMessage } from '@/api/client'
 import type { Client } from '@/api/types'
+import CaseDocumentsPanel from './CaseDocumentsPanel.vue'
+import CaseTimeEntriesPanel from './CaseTimeEntriesPanel.vue'
 
 const props = defineProps<{ id?: string }>()
 const router = useRouter()
@@ -110,5 +112,10 @@ async function save() {
         </button>
       </div>
     </form>
+
+    <div v-if="isEdit && props.id" class="mt-6 space-y-6">
+      <CaseDocumentsPanel :case-id="props.id" />
+      <CaseTimeEntriesPanel :case-id="props.id" />
+    </div>
   </div>
 </template>

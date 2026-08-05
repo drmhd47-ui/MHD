@@ -34,6 +34,55 @@ const router = createRouter({
           component: () => import('@/views/cases/CaseFormView.vue'),
           props: true
         },
+        { path: 'appointments', name: 'appointments', component: () => import('@/views/appointments/AppointmentsListView.vue') },
+        {
+          path: 'appointments/new',
+          name: 'appointment-new',
+          component: () => import('@/views/appointments/AppointmentFormView.vue')
+        },
+        {
+          path: 'appointments/:id',
+          name: 'appointment-edit',
+          component: () => import('@/views/appointments/AppointmentFormView.vue'),
+          props: true
+        },
+        { path: 'legal-archive', name: 'legal-archive', component: () => import('@/views/legal-archive/LegalArchiveListView.vue') },
+        {
+          path: 'legal-archive/new',
+          name: 'legal-reference-new',
+          component: () => import('@/views/legal-archive/LegalReferenceFormView.vue')
+        },
+        {
+          path: 'legal-archive/:id',
+          name: 'legal-reference-edit',
+          component: () => import('@/views/legal-archive/LegalReferenceFormView.vue'),
+          props: true
+        },
+        {
+          path: 'invoices',
+          name: 'invoices',
+          component: () => import('@/views/billing/InvoicesListView.vue'),
+          meta: { managerOnly: true }
+        },
+        {
+          path: 'invoices/new',
+          name: 'invoice-new',
+          component: () => import('@/views/billing/InvoiceFormView.vue'),
+          meta: { managerOnly: true }
+        },
+        {
+          path: 'invoices/:id',
+          name: 'invoice-edit',
+          component: () => import('@/views/billing/InvoiceFormView.vue'),
+          props: true,
+          meta: { managerOnly: true }
+        },
+        {
+          path: 'settings/office',
+          name: 'office-settings',
+          component: () => import('@/views/OfficeSettingsView.vue'),
+          meta: { managerOnly: true }
+        },
         {
           path: 'users',
           name: 'users',

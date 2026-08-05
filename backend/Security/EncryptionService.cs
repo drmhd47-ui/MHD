@@ -3,7 +3,10 @@ using System.Text;
 
 namespace MHD.Api.Security;
 
-/// <summary>تشفير حقول حساسة (كسر TOTP) بـ AES-256-GCM. المفتاح من الإعداد Security:FieldEncryptionKey (32 بايت base64).</summary>
+/// <summary>
+/// تشفير حقول حساسة (سر TOTP) ومستندات كاملة بـ AES-256-GCM. المفتاح من الإعداد
+/// Security:FieldEncryptionKey (32 بايت base64) — وهو نفسه STORAGE_KEY في بيئة الإنتاج.
+/// </summary>
 public class EncryptionService
 {
     private readonly byte[] _key;
@@ -18,16 +21,19 @@ public class EncryptionService
             throw new InvalidOperationException("Security:FieldEncryptionKey يجب أن يكون 32 بايت بعد فك base64");
     }
 
-    public string Encrypt(string plaintext)
+    public string Encrypt(string plaintext) => Convert.ToBase64String(EncryptBytes(Encoding.UTF8.GetBytes(plaintext)));
+
+    public string Decrypt(string payloadBase64) => Encoding.UTF8.GetString(DecryptBytes(Convert.FromBase64String(payloadBase64)));
+
+    public byte[] EncryptBytes(byte[] plaintext)
     {
         var nonce = RandomNumberGenerator.GetBytes(12);
-        var plainBytes = Encoding.UTF8.GetBytes(plaintext);
-        var cipher = new byte[plainBytes.Length];
+        var cipher = new byte[plaintext.Length];
         var tag = new byte[16];
 
         using (var aes = new AesGcm(_key, 16))
         {
-            aes.Encrypt(nonce, plainBytes, cipher, tag);
+            aes.Encrypt(nonce, plaintext, cipher, tag);
         }
 
         var result = new byte[nonce.Length + tag.Length + cipher.Length];
@@ -35,12 +41,11 @@ public class EncryptionService
         Buffer.BlockCopy(tag, 0, result, nonce.Length, tag.Length);
         Buffer.BlockCopy(cipher, 0, result, nonce.Length + tag.Length, cipher.Length);
 
-        return Convert.ToBase64String(result);
+        return result;
     }
 
-    public string Decrypt(string payloadBase64)
+    public byte[] DecryptBytes(byte[] payload)
     {
-        var payload = Convert.FromBase64String(payloadBase64);
         var nonce = payload[..12];
         var tag = payload[12..28];
         var cipher = payload[28..];
@@ -51,6 +56,6 @@ public class EncryptionService
             aes.Decrypt(nonce, cipher, tag, plain);
         }
 
-        return Encoding.UTF8.GetString(plain);
+        return plain;
     }
 }

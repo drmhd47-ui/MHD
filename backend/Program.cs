@@ -10,6 +10,12 @@ using MHD.Api.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+    // هامش فوق حد رفع المستند (50 ميجابايت) المفروض في DocumentStorage.
+    options.Limits.MaxRequestBodySize = 60 * 1024 * 1024;
+});
+
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
@@ -23,6 +29,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddSingleton<JwtTokenService>();
 builder.Services.AddSingleton<EncryptionService>();
+builder.Services.AddSingleton<DocumentStorage>();
 builder.Services.AddScoped<AuditLogger>();
 
 var jwtKey = builder.Configuration["Jwt:Key"];
@@ -134,6 +141,12 @@ app.MapUserEndpoints();
 app.MapClientEndpoints();
 app.MapCaseEndpoints();
 app.MapAuditEndpoints();
+app.MapDocumentEndpoints();
+app.MapAppointmentEndpoints();
+app.MapLegalReferenceEndpoints();
+app.MapTimeEntryEndpoints();
+app.MapInvoiceEndpoints();
+app.MapOfficeSettingsEndpoints();
 
 app.MapGet("/health", () => Results.Ok(new { status = "ok" })).AllowAnonymous();
 

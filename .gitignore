@@ -1,6 +1,7 @@
 # .NET
 backend/bin/
 backend/obj/
+backend/storage/
 
 # Node
 frontend/node_modules/

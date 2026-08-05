@@ -10,11 +10,15 @@ const navItems = computed(() => {
   const items = [
     { to: '/', label: 'الرئيسية' },
     { to: '/clients', label: 'العملاء' },
-    { to: '/cases', label: 'القضايا والملفات' }
+    { to: '/cases', label: 'القضايا والملفات' },
+    { to: '/appointments', label: 'الجدولة والمواعيد' },
+    { to: '/legal-archive', label: 'الأرشيف القانوني' }
   ]
   if (auth.isManager) {
+    items.push({ to: '/invoices', label: 'الفواتير والمدفوعات' })
     items.push({ to: '/users', label: 'إدارة المستخدمين' })
     items.push({ to: '/audit-log', label: 'سجل التدقيق' })
+    items.push({ to: '/settings/office', label: 'إعدادات المكتب' })
   }
   return items
 })

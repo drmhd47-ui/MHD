@@ -117,3 +117,177 @@ public class Case
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
     public Guid CreatedByUserId { get; set; }
 }
+
+/// <summary>مستند مرفق بملف قضية — مُخزَّن مشفَّراً على القرص (AES-256-GCM)، ببصمة SHA-256 تكشف أي عبث.</summary>
+public class Document
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
+
+    public Guid CaseId { get; set; }
+    public Case Case { get; set; } = default!;
+
+    public string FileName { get; set; } = default!;
+    public string ContentType { get; set; } = default!;
+    public long SizeBytes { get; set; }
+    public string Sha256Fingerprint { get; set; } = default!;
+
+    /// <summary>مسار الملف المشفَّر نسبةً إلى Storage:RootPath — وليس مساراً مطلقاً على القرص.</summary>
+    public string StoragePath { get; set; } = default!;
+
+    public bool IsArchived { get; set; }
+    public DateTimeOffset UploadedAt { get; set; } = DateTimeOffset.UtcNow;
+    public Guid UploadedByUserId { get; set; }
+}
+
+public enum AppointmentType
+{
+    Hearing = 1,
+    Meeting = 2,
+    Deadline = 3,
+    Other = 4
+}
+
+public class Appointment
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public string Title { get; set; } = default!;
+    public AppointmentType Type { get; set; } = AppointmentType.Other;
+
+    public Guid? CaseId { get; set; }
+    public Case? Case { get; set; }
+
+    public DateTimeOffset StartAt { get; set; }
+    public DateTimeOffset? EndAt { get; set; }
+    public string? Location { get; set; }
+    public string? Notes { get; set; }
+
+    /// <summary>عدد الدقائق قبل الموعد لإرسال تذكير — الحقل مسجَّل، الإرسال الفعلي لم يُبنَ بعد.</summary>
+    public int? ReminderMinutesBefore { get; set; }
+
+    public Guid AssignedUserId { get; set; }
+    public User AssignedUser { get; set; } = default!;
+
+    public bool IsCancelled { get; set; }
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+    public Guid CreatedByUserId { get; set; }
+}
+
+public enum LegalReferenceType
+{
+    Law = 1,
+    Regulation = 2,
+    Decision = 3,
+    Circular = 4,
+    Other = 5
+}
+
+/// <summary>الأرشيف القانوني للأنظمة واللوائح والقرارات — مرجع بحث داخلي، لا يرتبط بقضية بعينها.</summary>
+public class LegalReference
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public string Title { get; set; } = default!;
+    public LegalReferenceType Type { get; set; }
+    public string? IssuingAuthority { get; set; }
+    public DateOnly? IssueDate { get; set; }
+    public string? ReferenceNumber { get; set; }
+    public string? Summary { get; set; }
+    public string? SourceUrl { get; set; }
+
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+    public Guid CreatedByUserId { get; set; }
+}
+
+public class TimeEntry
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
+
+    public Guid CaseId { get; set; }
+    public Case Case { get; set; } = default!;
+
+    public Guid LawyerId { get; set; }
+    public User Lawyer { get; set; } = default!;
+
+    public DateOnly WorkDate { get; set; }
+    public decimal Hours { get; set; }
+    public string Description { get; set; } = default!;
+    public bool IsBilled { get; set; }
+
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+}
+
+public enum InvoiceStatus
+{
+    Draft = 1,
+    Issued = 2,
+    Paid = 3,
+    Cancelled = 4
+}
+
+/// <summary>
+/// فاتورة — حكر على المدير. لا حذف فعلي لها عمداً: فقط Draft قابلة للتعديل، وما إن تُصدَر (Issued)
+/// تتجمّد أرقامها نهائياً؛ الإلغاء بعد الإصدار يُسجَّل كحالة لا كحذف.
+/// </summary>
+public class Invoice
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
+
+    /// <summary>لا يُعيَّن إلا عند الإصدار (Issue) — الفاتورة قبل ذلك مسودة بلا رقم نظامي.</summary>
+    public string? InvoiceNumber { get; set; }
+
+    public Guid ClientId { get; set; }
+    public Client Client { get; set; } = default!;
+
+    public Guid? CaseId { get; set; }
+    public Case? Case { get; set; }
+
+    public InvoiceStatus Status { get; set; } = InvoiceStatus.Draft;
+    public DateOnly IssueDate { get; set; }
+
+    public decimal Subtotal { get; set; }
+    public decimal VatRate { get; set; } = 0.15m;
+    public decimal VatAmount { get; set; }
+    public decimal Total { get; set; }
+
+    /// <summary>اسم البائع والرقم الضريبي وقت الإصدار — يُنسَخان من إعدادات المكتب لتثبيت الفاتورة تاريخياً.</summary>
+    public string? SellerName { get; set; }
+    public string? SellerVatNumber { get; set; }
+
+    /// <summary>حمولة TLV بصيغة ZATCA مُرمَّزة base64 — تُبنى فقط عند الإصدار.</summary>
+    public string? QrCodeTlvBase64 { get; set; }
+
+    public DateTimeOffset? PaidAt { get; set; }
+    public decimal? PaidAmount { get; set; }
+
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+    public Guid CreatedByUserId { get; set; }
+
+    public ICollection<InvoiceLine> Lines { get; set; } = new List<InvoiceLine>();
+}
+
+public class InvoiceLine
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
+
+    public Guid InvoiceId { get; set; }
+    public Invoice Invoice { get; set; } = default!;
+
+    public string Description { get; set; } = default!;
+    public decimal Quantity { get; set; } = 1;
+    public decimal UnitPrice { get; set; }
+    public decimal LineTotal { get; set; }
+}
+
+/// <summary>إعدادات المكتب — صف واحد فقط، حكر على المدير، يُستخدم في بناء الفواتير.</summary>
+public class OfficeSettings
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public string FirmName { get; set; } = "M NEXUS للمحاماة والاستشارات القانونية";
+    public string? VatNumber { get; set; }
+    public string? CommercialRegistrationNumber { get; set; }
+    public string? Address { get; set; }
+    public string? Phone { get; set; }
+    public string? Email { get; set; }
+    public decimal DefaultVatRate { get; set; } = 0.15m;
+
+    public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
+}

@@ -21,6 +21,8 @@ services:
       Cors__AllowedOrigins__0: ${PUBLIC_ORIGIN}
       Seed__ManagerEmail: ${MANAGER_EMAIL}
       Seed__ManagerPassword: ${MANAGER_TEMP_PASSWORD}
+    volumes:
+      - documents-data:/app/storage/documents
     depends_on:
       - db
     restart: unless-stopped
@@ -38,3 +40,4 @@ services:
 
 volumes:
   db-data:
+  documents-data:
