@@ -175,7 +175,7 @@ public static class InvoiceEndpoints
 
     private static async Task<IResult> Issue(Guid id, AppDbContext db, AuditLogger audit, HttpContext http)
     {
-        var invoice = await db.Invoices.FirstOrDefaultAsync(i => i.Id == id);
+        var invoice = await db.Invoices.Include(i => i.Lines).FirstOrDefaultAsync(i => i.Id == id);
         if (invoice is null) return Results.NotFound();
         if (invoice.Status != InvoiceStatus.Draft)
             return Results.BadRequest(new { message = "الفاتورة صادرة بالفعل" });
@@ -215,7 +215,7 @@ public static class InvoiceEndpoints
 
     private static async Task<IResult> MarkPaid(Guid id, MarkPaidRequest req, AppDbContext db, AuditLogger audit, HttpContext http)
     {
-        var invoice = await db.Invoices.FindAsync(id);
+        var invoice = await db.Invoices.Include(i => i.Lines).FirstOrDefaultAsync(i => i.Id == id);
         if (invoice is null) return Results.NotFound();
         if (invoice.Status != InvoiceStatus.Issued)
             return Results.BadRequest(new { message = "لا يمكن تسجيل الدفع إلا لفاتورة صادرة" });
@@ -232,7 +232,7 @@ public static class InvoiceEndpoints
 
     private static async Task<IResult> Cancel(Guid id, AppDbContext db, AuditLogger audit, HttpContext http)
     {
-        var invoice = await db.Invoices.FindAsync(id);
+        var invoice = await db.Invoices.Include(i => i.Lines).FirstOrDefaultAsync(i => i.Id == id);
         if (invoice is null) return Results.NotFound();
         if (invoice.Status == InvoiceStatus.Paid)
             return Results.BadRequest(new { message = "لا يمكن إلغاء فاتورة مدفوعة" });

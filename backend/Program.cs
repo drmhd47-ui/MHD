@@ -82,6 +82,18 @@ builder.Services.AddRateLimiter(options =>
                 QueueLimit = 0
             }));
 
+    // بقعدة عدّاد مستقلة عن "login": تأكيد TOTP يمكن أن يُخطئه المستخدم الشرعي مرتين أو ثلاثاً أثناء
+    // الإعداد الأول، ولا ينبغي أن يستهلك ذلك من رصيد محاولات الدخول ويقفل حسابه عن الدخول أيضاً.
+    options.AddPolicy("totp", context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 5,
+                Window = TimeSpan.FromMinutes(5),
+                QueueLimit = 0
+            }));
+
     options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
         RateLimitPartition.GetFixedWindowLimiter(
             context.Connection.RemoteIpAddress?.ToString() ?? "unknown",

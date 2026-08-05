@@ -18,7 +18,7 @@ public static class AuthEndpoints
         group.MapPost("/logout", Logout);
 
         group.MapPost("/totp/setup", SetupTotp).RequireAuthorization();
-        group.MapPost("/totp/confirm", ConfirmTotp).RequireAuthorization().RequireRateLimiting("login");
+        group.MapPost("/totp/confirm", ConfirmTotp).RequireAuthorization().RequireRateLimiting("totp");
         group.MapGet("/me", Me).RequireAuthorization();
     }
 
