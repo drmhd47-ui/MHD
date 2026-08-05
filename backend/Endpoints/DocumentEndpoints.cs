@@ -83,7 +83,19 @@ public static class DocumentEndpoints
         var doc = await db.Documents.FindAsync(id);
         if (doc is null) return Results.NotFound();
 
-        var content = await storage.LoadAsync(doc.StoragePath);
+        byte[] content;
+        try
+        {
+            // AesGcm.Decrypt يرفض أي عبث في الشيفرة أو البصمة المصاحبة برمي CryptographicException قبل
+            // أن يصل التنفيذ للتحقق اليدوي من SHA-256 أدناه — لهذا يجب التقاطها هنا لا افتراض نجاح فك التشفير دائماً.
+            content = await storage.LoadAsync(doc.StoragePath);
+        }
+        catch (CryptographicException)
+        {
+            await audit.LogAsync(JwtTokenService.GetUserId(http.User), ActorName(http), "DOCUMENT_INTEGRITY_FAILED", "Document", id.ToString(), ClientIp(http));
+            return Results.Json(new { message = "فشل التحقق من سلامة الملف — قد يكون تعرّض للتلاعب" }, statusCode: 500);
+        }
+
         var actualSha256 = Convert.ToHexString(SHA256.HashData(content));
         if (!string.Equals(actualSha256, doc.Sha256Fingerprint, StringComparison.OrdinalIgnoreCase))
         {

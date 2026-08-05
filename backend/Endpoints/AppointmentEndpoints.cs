@@ -51,6 +51,9 @@ public static class AppointmentEndpoints
         if (req.CaseId is not null && !await db.Cases.AnyAsync(c => c.Id == req.CaseId))
             return Results.BadRequest(new { message = "القضية غير موجودة" });
 
+        if (req.AssignedUserId is not null && !await db.Users.AnyAsync(u => u.Id == req.AssignedUserId))
+            return Results.BadRequest(new { message = "المستخدم المسنَد إليه غير موجود" });
+
         var userId = JwtTokenService.GetUserId(http.User)!.Value;
         var entity = new Appointment
         {
@@ -82,6 +85,9 @@ public static class AppointmentEndpoints
 
         if (req.CaseId is not null && !await db.Cases.AnyAsync(c => c.Id == req.CaseId))
             return Results.BadRequest(new { message = "القضية غير موجودة" });
+
+        if (req.AssignedUserId is not null && !await db.Users.AnyAsync(u => u.Id == req.AssignedUserId))
+            return Results.BadRequest(new { message = "المستخدم المسنَد إليه غير موجود" });
 
         entity.Title = req.Title.Trim();
         entity.Type = req.Type;

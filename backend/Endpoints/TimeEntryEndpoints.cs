@@ -74,6 +74,9 @@ public static class TimeEntryEndpoints
         if (string.IsNullOrWhiteSpace(req.Description))
             return Results.BadRequest(new { message = "وصف العمل مطلوب" });
 
+        if (!await db.Cases.AnyAsync(c => c.Id == req.CaseId))
+            return Results.BadRequest(new { message = "القضية غير موجودة" });
+
         entity.CaseId = req.CaseId;
         entity.WorkDate = req.WorkDate;
         entity.Hours = req.Hours;

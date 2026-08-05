@@ -202,8 +202,10 @@ public static class InvoiceEndpoints
                 await audit.LogAsync(JwtTokenService.GetUserId(http.User), ActorName(http), "INVOICE_ISSUED", "Invoice", invoice.Id.ToString(), ClientIp(http));
                 return Results.Ok(invoice);
             }
-            catch (DbUpdateException) when (attempt < maxAttempts)
+            catch (DbUpdateException)
             {
+                if (attempt == maxAttempts)
+                    return Results.Json(new { message = "تعذّر إصدار رقم فاتورة فريد، حاول من جديد" }, statusCode: 409);
                 // تصادم نادر على رقم الفاتورة الفريد — أعد المحاولة برقم تالٍ.
             }
         }

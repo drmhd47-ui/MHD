@@ -202,7 +202,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         nameof(Invoice.CaseId), nameof(Invoice.IssueDate)
     ];
 
-    /// <summary>لا حذف فعلي للفواتير أبداً، ولا تعديل لبياناتها المالية بعد تجاوزها حالة المسودة.</summary>
+    /// <summary>لا حذف فعلي للفواتير أبداً، ولا تعديل لبياناتها المالية أو بنودها بعد تجاوزها حالة المسودة.</summary>
     private void BlockInvoiceTampering()
     {
         foreach (var entry in ChangeTracker.Entries<Invoice>())
@@ -218,5 +218,21 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             if (FrozenInvoiceFields.Any(field => entry.Property(field).IsModified))
                 throw new InvalidOperationException("الفاتورة المُصدَرة غير قابلة للتعديل في بياناتها المالية.");
         }
+
+        // حماية إضافية لبنود الفاتورة: تعتمد على القيمة الحالية للحالة على أي فاتورة أب متتبَّعة ضمن نفس
+        // السياق — تُغطّي حالات لم تُعدَّل فيها الفاتورة نفسها في هذا الحفظ، لا الحالة الأصلية فقط.
+        var nonDraftInvoiceIds = ChangeTracker.Entries<Invoice>()
+            .Where(e => e.State != EntityState.Added && e.Entity.Status != InvoiceStatus.Draft)
+            .Select(e => e.Entity.Id)
+            .ToHashSet();
+
+        if (nonDraftInvoiceIds.Count == 0) return;
+
+        var illegalLineChange = ChangeTracker.Entries<InvoiceLine>()
+            .Any(e => e.State is EntityState.Added or EntityState.Modified or EntityState.Deleted
+                && nonDraftInvoiceIds.Contains(e.Entity.InvoiceId));
+
+        if (illegalLineChange)
+            throw new InvalidOperationException("لا يمكن تعديل بنود فاتورة صادرة.");
     }
 }
