@@ -1,0 +1,266 @@
+# سجل المصادر — كل مصدر طلبه المالك، وطريقة الوصول الفعلية إليه.
+#
+# access:
+#   public_web          منشور علناً ويمكن جلبه آلياً (بعد مراجعة شروط الاستخدام)
+#   requires_agreement  منشور جزئياً أو خلف تسجيل دخول؛ الاستيراد الكامل يحتاج اتفاقية تبادل بيانات
+#   manual_only         يُستورد من ملفات يرفعها مراجع (PDF/HTML/JSON) — لا زاحف آلي
+#   not_public          غير منشور أصلاً؛ لا يجوز استيراده إلا من صاحبه وبتفويضه
+#
+# connector:
+#   crawler   زاحف عام بأنماط روابط (follow/document) ومحددات CSS قابلة للمعايرة
+#   files     استيراد ملفات فقط (nexus import-files)
+#
+# calibrated: false تعني أن أنماط الروابط والمحددات لم تُختبر على الموقع الحي بعد
+# (بيئة البناء لا تصل إلى المواقع الحكومية). شغّل `nexus calibrate <url>` على الخادم أولاً.
+# الأنماط المكتوبة هنا مأخوذة من روابط حقيقية ظهرت في نتائج البحث، لا مخمّنة من العدم.
+
+defaults:
+  max_pages_per_run: 500
+  enabled: false        # لا يعمل أي زاحف حتى يُفعَّل صراحة بعد مراجعة شروط الاستخدام
+
+sources:
+  # ─────────────── التشريعات الأساسية ───────────────
+  - id: boe
+    name_ar: بوابة الأنظمة — هيئة الخبراء بمجلس الوزراء
+    owner_ar: هيئة الخبراء بمجلس الوزراء
+    base_url: https://laws.boe.gov.sa
+    access: public_web
+    connector: crawler
+    covers: [law, regulation, royal_decree, royal_order, council_decision, organization]
+    default_doc_type: law
+    issuing_authority: null
+    seeds:
+      - https://laws.boe.gov.sa/BoeLaws/Laws/Folders
+      - https://laws.boe.gov.sa/BoeLaws/Laws/
+    follow_patterns:
+      - ^https://laws\.boe\.gov\.sa/BoeLaws/Laws/(Folders|Folder|LawsList|Search).*
+    document_patterns:
+      - ^https://laws\.boe\.gov\.sa/BoeLaws/Laws/LawDetails/(?P<id>[0-9a-fA-F-]{36})/1$
+    selectors: {title: [], body: []}
+    render: http
+    schedule: weekly
+    calibrated: false
+
+  - id: uqn
+    name_ar: جريدة أم القرى
+    owner_ar: جريدة أم القرى (الجريدة الرسمية)
+    base_url: https://uqn.gov.sa
+    access: public_web
+    connector: crawler
+    covers: [law, regulation, royal_order, royal_decree, council_decision, ministerial_decision]
+    default_doc_type: other
+    purpose: كشف التغيير — ما يُنشر هنا يُنبّه لتحديث النص في بقية المصادر
+    seeds:
+      - https://uqn.gov.sa/
+    follow_patterns:
+      - ^https://uqn\.gov\.sa/(category|archive|search|\?).*
+    document_patterns:
+      - ^https://uqn\.gov\.sa/details\?p=(?P<id>\d+)$
+    selectors: {title: [], body: []}
+    render: http
+    schedule: daily
+    calibrated: false
+
+  - id: ncar
+    name_ar: المركز الوطني للوثائق والمحفوظات
+    owner_ar: المركز الوطني للوثائق والمحفوظات
+    base_url: https://ncar.gov.sa
+    access: requires_agreement
+    connector: files
+    covers: [royal_order, royal_decree, high_order, council_decision, other]
+    default_doc_type: other
+    notes: >
+      وظيفته الأساسية حفظ الوثائق الرسمية وأرشفتها، ولم يتحقق وجود بحث تشريعي عام قابل للجلب الآلي.
+      الأوامر السامية والوثائق الأرشيفية كثير منها غير منشور. الطريق الصحيح: طلب رسمي للحصول على
+      المنشور منها، ثم استيراده ملفاتٍ.
+    calibrated: false
+
+  # ─────────────── وزارة العدل ───────────────
+  - id: moj_legislation
+    name_ar: البوابة القانونية — التشريعات العدلية
+    owner_ar: وزارة العدل
+    base_url: https://laws.moj.gov.sa
+    access: public_web
+    connector: crawler
+    covers: [law, regulation, circular]
+    default_doc_type: law
+    seeds:
+      - https://laws.moj.gov.sa/ar/legislations-regulations/
+    follow_patterns:
+      - ^https://laws\.moj\.gov\.sa/ar/legislations-regulations/.*
+    document_patterns:
+      - ^https://laws\.moj\.gov\.sa/ar/legislation/(?P<id>[A-Za-z0-9_-]+)$
+    selectors: {title: [], body: []}
+    render: browser     # يُرجَّح أن البوابة تُحمَّل بجافاسكربت؛ تحقّق بـ calibrate
+    schedule: weekly
+    calibrated: false
+
+  - id: moj_judicial
+    name_ar: البوابة القانونية — الأحكام القضائية المنشورة
+    owner_ar: وزارة العدل
+    base_url: https://laws.moj.gov.sa
+    access: public_web
+    connector: crawler
+    covers: [judicial_decision]
+    default_doc_type: judicial_decision
+    seeds:
+      - https://laws.moj.gov.sa/ar/
+    follow_patterns:
+      - ^https://laws\.moj\.gov\.sa/ar/JudicialDecisionsList/\d+/[A-Za-z0-9_-]+$
+      - ^https://laws\.moj\.gov\.sa/ar/JudicialDecisions.*
+    document_patterns:
+      - ^https://laws\.moj\.gov\.sa/ar/JudicialDecision/(?P<id>[A-Za-z0-9_-]+)$
+    selectors: {title: [], body: []}
+    render: browser
+    schedule: weekly
+    calibrated: false
+    notes: الأحكام تُحجب منها المعرّفات آلياً ويُفرض فحص يدوي للأسماء قبل الاعتماد.
+
+  - id: moj_principles
+    name_ar: مجموعات الأحكام القضائية والمبادئ والقرارات القضائية (بجميع إصداراتها)
+    owner_ar: وزارة العدل — مركز البحوث
+    access: manual_only
+    connector: files
+    covers: [judicial_decision, judicial_principle]
+    default_doc_type: judicial_principle
+    notes: >
+      تصدر مجلدات PDF (مجموعة الأحكام القضائية لكل عام، والمبادئ والقرارات الصادرة من الهيئة القضائية
+      العليا والهيئة الدائمة والعامة بمجلس القضاء الأعلى والمحكمة العليا). تُنزَّل وتُستورد بـ import-files،
+      ويُتحقق من أن طبقة النص في PDF سليمة (تحذير pdf_text_may_be_reversed_or_garbled).
+
+  - id: moj_forms
+    name_ar: النماذج العدلية والقضائية
+    owner_ar: وزارة العدل / ناجز
+    access: requires_agreement
+    connector: files
+    covers: [form, guide]
+    default_doc_type: form
+    notes: كثير من النماذج داخل خدمات ناجز بعد تسجيل الدخول؛ المنشور منها علناً يُستورد ملفاتٍ.
+
+  # ─────────────── القضاء الإداري ───────────────
+  - id: bog
+    name_ar: ديوان المظالم — مجموعات الأحكام والمبادئ الإدارية
+    owner_ar: ديوان المظالم
+    base_url: https://www.bog.gov.sa
+    access: manual_only
+    connector: files
+    covers: [judicial_decision, judicial_principle]
+    default_doc_type: judicial_principle
+
+  # ─────────────── الجهات ───────────────
+  - id: pp
+    name_ar: النيابة العامة — الأدلة والإصدارات المنشورة
+    owner_ar: النيابة العامة
+    base_url: https://www.pp.gov.sa
+    access: public_web
+    connector: crawler
+    covers: [guide, circular, regulation]
+    default_doc_type: guide
+    seeds: [https://www.pp.gov.sa/]
+    follow_patterns: []
+    document_patterns: []
+    selectors: {title: [], body: []}
+    render: http
+    schedule: monthly
+    calibrated: false
+    notes: التعاميم الداخلية للنيابة غير منشورة ولا تُستورد.
+
+  - id: moi
+    name_ar: وزارة الداخلية — الأنظمة واللوائح المنشورة
+    owner_ar: وزارة الداخلية
+    base_url: https://www.moi.gov.sa
+    access: public_web
+    connector: crawler
+    covers: [law, regulation, guide]
+    default_doc_type: regulation
+    seeds: [https://www.moi.gov.sa/]
+    follow_patterns: []
+    document_patterns: []
+    selectors: {title: [], body: []}
+    render: browser
+    schedule: monthly
+    calibrated: false
+    notes: التنظيمات والتعليمات الداخلية للوزارة غير منشورة ولا يجوز استيرادها إلا بتفويض.
+
+  - id: traffic
+    name_ar: المرور — نظام المرور ولائحته وجدول المخالفات
+    owner_ar: الإدارة العامة للمرور
+    access: public_web
+    connector: files
+    covers: [law, regulation, guide]
+    default_doc_type: regulation
+    notes: نص نظام المرور ولائحته موجودان في بوابة هيئة الخبراء (boe)؛ جدول المخالفات والأدلة تُستورد ملفاتٍ.
+
+  - id: sba
+    name_ar: إصدارات الهيئة السعودية للمحامين
+    owner_ar: الهيئة السعودية للمحامين
+    base_url: https://sba.gov.sa
+    access: public_web
+    connector: crawler
+    covers: [professional_publication, guide, regulation]
+    default_doc_type: professional_publication
+    seeds:
+      - https://sba.gov.sa/تشريعات-مهنة-المحاماة/
+    follow_patterns:
+      - ^https://sba\.gov\.sa/.*
+    document_patterns:
+      - ^https://sba\.gov\.sa/wp-content/uploads/.+\.pdf$
+    selectors: {title: [], body: []}
+    render: http
+    schedule: monthly
+    calibrated: false
+
+  # الهيئات والجهات التنظيمية القطاعية — نموذج واحد لكل جهة؛ تُضبط الأنماط لكل منها بعد المعايرة.
+  - {id: sdaia, name_ar: سدايا — البيانات والذكاء الاصطناعي, owner_ar: الهيئة السعودية للبيانات والذكاء الاصطناعي, base_url: https://sdaia.gov.sa, access: public_web, connector: files, covers: [regulation, guide], default_doc_type: regulation}
+  - {id: nca, name_ar: الهيئة الوطنية للأمن السيبراني, owner_ar: الهيئة الوطنية للأمن السيبراني, base_url: https://nca.gov.sa, access: public_web, connector: files, covers: [regulation, guide], default_doc_type: regulation}
+  - {id: cma, name_ar: هيئة السوق المالية — اللوائح, owner_ar: هيئة السوق المالية, base_url: https://cma.org.sa, access: public_web, connector: files, covers: [regulation], default_doc_type: regulation}
+  - {id: sama, name_ar: البنك المركزي السعودي — الأنظمة والتعليمات, owner_ar: البنك المركزي السعودي, base_url: https://www.sama.gov.sa, access: public_web, connector: files, covers: [regulation, circular], default_doc_type: regulation}
+  - {id: zatca, name_ar: هيئة الزكاة والضريبة والجمارك, owner_ar: هيئة الزكاة والضريبة والجمارك, base_url: https://zatca.gov.sa, access: public_web, connector: files, covers: [regulation, guide], default_doc_type: regulation}
+  - {id: mc, name_ar: وزارة التجارة — الأنظمة واللوائح, owner_ar: وزارة التجارة, base_url: https://mc.gov.sa, access: public_web, connector: files, covers: [regulation, ministerial_decision], default_doc_type: regulation}
+  - {id: hrsd, name_ar: وزارة الموارد البشرية — القرارات واللوائح, owner_ar: وزارة الموارد البشرية والتنمية الاجتماعية, base_url: https://hrsd.gov.sa, access: public_web, connector: files, covers: [regulation, ministerial_decision], default_doc_type: ministerial_decision}
+  - {id: gac, name_ar: الهيئة العامة للمنافسة, owner_ar: الهيئة العامة للمنافسة, base_url: https://gac.gov.sa, access: public_web, connector: files, covers: [regulation, guide], default_doc_type: regulation}
+  - {id: saip, name_ar: الهيئة السعودية للملكية الفكرية, owner_ar: الهيئة السعودية للملكية الفكرية, base_url: https://saip.gov.sa, access: public_web, connector: files, covers: [regulation, guide], default_doc_type: regulation}
+
+  # ─────────────── المراجع الفقهية والتاريخية ───────────────
+  - id: majalla
+    name_ar: مجلة الأحكام العدلية
+    owner_ar: (تقنين عثماني على المذهب الحنفي، 1293هـ تقريباً)
+    access: manual_only
+    connector: files
+    covers: [fiqh_reference]
+    default_doc_type: fiqh_reference
+    legal_status: historical
+    notes: >
+      ليست نظاماً نافذاً في المملكة. تُستورد مرجعاً فقهياً تاريخياً فقط، وتُوسم بذلك في كل نتيجة بحث،
+      ولا يستشهد بها المساعد على أنها نص نظامي. تُستورد من طبعة موثوقة يحددها المراجع.
+
+  - id: majalla_hanbali
+    name_ar: مجلة الأحكام الشرعية على مذهب الإمام أحمد (القاري)
+    owner_ar: أحمد بن عبدالله القاري
+    access: manual_only
+    connector: files
+    covers: [fiqh_reference]
+    default_doc_type: fiqh_reference
+    legal_status: historical
+    notes: أقرب للمذهب المعمول به في القضاء السعودي من مجلة الأحكام العدلية، لكنها كذلك مرجع فقهي لا نظام نافذ.
+
+  # ─────────────── غير منشور ───────────────
+  - id: internal_regulations
+    name_ar: التنظيمات والتعاميم الداخلية للجهات
+    owner_ar: الجهة المالكة
+    access: not_public
+    connector: files
+    covers: [circular, organization]
+    default_doc_type: circular
+    notes: >
+      غير منشورة للعموم. لا تُجمع بأي وسيلة. يجوز استيراد ما تسلّمه الجهة نفسها بتفويض مكتوب، ويبقى
+      مقيّداً (لا يظهر للجمهور) — تقييد الظهور يُبنى في المرحلة الثانية مع الصلاحيات.
+
+  # ─────────────── رفع يدوي عام ───────────────
+  - id: manual
+    name_ar: استيراد يدوي
+    owner_ar: مراجع المحتوى
+    access: manual_only
+    connector: files
+    covers: [other]
+    default_doc_type: other

@@ -1,0 +1,14 @@
+[project]
+name = "nexus-platform"
+version = "1.0.0"
+description = "M NEXUS Connect — Saudi legal knowledge base, ingestion pipeline and assistant (Phase 1)"
+requires-python = ">=3.11"
+
+[project.scripts]
+nexus = "nexus_platform.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["nexus_platform*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

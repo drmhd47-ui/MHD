@@ -1,0 +1,34 @@
+# M NEXUS Connect — Phase 1. Host inside the Kingdom (see docs/PLATFORM_DESIGN.md §0.6).
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: nexus
+      POSTGRES_USER: nexus
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+    volumes: [pgdata:/var/lib/postgresql/data]
+    restart: unless-stopped
+
+  api:
+    build: .
+    env_file: .env
+    depends_on: [db]
+    volumes: [raw:/data/raw]
+    ports: ["127.0.0.1:8000:8000"]   # put a TLS reverse proxy in front
+    restart: unless-stopped
+
+  # One-off jobs, e.g.:
+  #   docker compose run --rm ingest migrate
+  #   docker compose run --rm ingest crawl boe
+  #   docker compose run --rm -v /path/to/pdfs:/in ingest import-files moj_principles /in
+  ingest:
+    build: .
+    env_file: .env
+    depends_on: [db]
+    volumes: [raw:/data/raw]
+    entrypoint: ["python", "-m", "nexus_platform.cli"]
+    profiles: [jobs]
+
+volumes:
+  pgdata:
+  raw:

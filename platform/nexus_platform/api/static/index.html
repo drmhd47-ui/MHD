@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M NEXUS Connect — الأنظمة السعودية</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+  <h1>M NEXUS Connect</h1>
+  <p class="sub">قاعدة معرفة للأنظمة السعودية من المصادر الرسمية، مع مساعد يجيب من النص فقط</p>
+  <p id="stats" class="stats"></p>
+  <nav>
+    <button data-tab="ask" class="active">اسأل المساعد</button>
+    <button data-tab="search">ابحث في الأنظمة</button>
+    <button data-tab="sources">المصادر</button>
+    <button data-tab="review">المراجعة</button>
+  </nav>
+</header>
+
+<main>
+  <section id="tab-ask" class="tab active">
+    <form id="ask-form">
+      <textarea id="question" rows="4" maxlength="4000" required placeholder="اكتب سؤالك، مثال: كم مدة الإشعار عند إنهاء عقد العمل غير محدد المدة؟"></textarea>
+      <label class="check"><input type="checkbox" id="consent"> أوافق على مراجعة محامٍ لسؤالي (بعد حجب بياناتي) لتحسين الجودة</label>
+      <button type="submit">اسأل</button>
+    </form>
+    <div id="answer"></div>
+  </section>
+
+  <section id="tab-search" class="tab">
+    <form id="search-form">
+      <input id="q" type="search" minlength="2" required placeholder="مثال: المادة 77 من نظام العمل — أو: فصل العامل دون سبب مشروع">
+      <label class="check"><input type="checkbox" id="historical"> تضمين المراجع التاريخية (غير النافذة)</label>
+      <button type="submit">بحث</button>
+    </form>
+    <div id="results"></div>
+    <div id="document"></div>
+  </section>
+
+  <section id="tab-sources" class="tab"><div id="sources"></div></section>
+
+  <section id="tab-review" class="tab">
+    <form id="token-form">
+      <input id="token" type="password" placeholder="رمز المراجع" autocomplete="off">
+      <button type="submit">عرض قائمة المراجعة</button>
+    </form>
+    <div id="queue"></div>
+    <div id="version"></div>
+  </section>
+</main>
+
+<footer>معلومات عامة وليست استشارة قانونية. كل نص معروض اعتمده مراجع قانوني ويحمل رابط مصدره الرسمي.</footer>
+<script src="/static/app.js"></script>
+</body>
+</html>

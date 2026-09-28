@@ -1,0 +1,4 @@
+-r requirements.txt
+pytest==9.1.1
+# Optional: only for sources with `render: browser` (JavaScript portals)
+playwright
