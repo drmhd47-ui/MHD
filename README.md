@@ -15,6 +15,7 @@
 - سياسة المشروع الحالية والقرارات المعتمدة: [`docs/PROJECT_POLICY.md`](docs/PROJECT_POLICY.md)
 - كتالوج الخدمات المعتمد: [`docs/SERVICE_CATALOG.md`](docs/SERVICE_CATALOG.md)
 - تقرير فحص الموقع وما نُفّذ منه: [`docs/WEBSITE_REVIEW.md`](docs/WEBSITE_REVIEW.md)
+- مراجعة النموذجين الأوليين (التطبيق وواجهة الإدارة) وما صُحّح فيهما: [`docs/PROTOTYPES_REVIEW.md`](docs/PROTOTYPES_REVIEW.md) — والملفان في [`prototypes/`](prototypes/)
 - المواصفة الأصلية للنظام الداخلي: [`docs/PROJECT_SPEC.md`](docs/PROJECT_SPEC.md)
 
 الأقسام التالية توثّق **حالة التنفيذ الفعلية** للنظام الداخلي، ثم الموقع وخادم الاستقبال.
@@ -136,6 +137,7 @@ MHD/
 ├── deploy/public/               نشر الموقع وخادم الاستقبال على خادم مستقل (nginx + compose)
 ├── docker-compose.yml           نشر النظام الداخلي
 ├── .env.example
+├── prototypes/                 النموذجان الأوليان المصحّحان (التطبيق وواجهة الإدارة) — مرجع تصميم، لا بيانات حقيقية
 └── docs/                        السياسة، الكتالوج، تقرير الموقع، المواصفة الأصلية
 ```
 

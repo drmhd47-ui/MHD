@@ -1,0 +1,98 @@
+app | fonts: removed 63 faces / 19 files, added 12 Noto Naskh files | 1
+console | fonts: removed 31 faces / 11 files, added 12 Noto Naskh files | 1
+MG_DATA(app) | @mgroup.sa | 7
+MG_DATA(app) | firm:'M GROUP LAW FIRM' | 1
+MG_DATA(app) | initials:{ar:'ف',en:'F'}, name:{ar:'فيصل المالكي',en:'Faisal | 1
+MG_DATA(app) | 'فيصل المالكي', 'Faisal Al-Malki' | 1
+MG_DATA(app) | demoPartner: 'فيصل · شريك' | 1
+MG_DATA(app) | demoPartner: 'Faisal · Partner' | 1
+MG_DATA(app) | الرئيس التنفيذي | 2
+MG_DATA(app) | lead lawyer + CEO | 1
+MG_DATA(app) | lead lawyer and CEO | 1
+MG_DATA(app) | بوابة مستقلة للشركاء المؤسسين | 1
+MG_DATA(app) | Private portal for founding partners | 1
+MG_DATA(app) | {key:'translation', name:{ar:'الترجمة القانونية',en:'Legal t | 1
+MG_DATA(app) | {key:'accounting', name:{ar:'محاسبة قانونية',en:'Legal accou | 1
+MG_DATA(app) | ويجب مطابقة النص مع المصدر الرسمي قبل الاعتماد والتوقيع.' | 1
+MG_DATA(app) | must be matched against the official text before approval an | 1
+MG_DATA(app) | svcSub: '53 تخصصًا · 7 محاور' | 1
+MG_DATA(app) | svcSub: '53 specialties · 7 practice axes' | 1
+MG_DATA(app) | saNote: 'كل دخول وخروج يُسجل مع الجهاز وعنوان IP والموقع الت | 1
+MG_DATA(app) | slNote: 'يُحدَّد عنوان IP والموقع التقريبي في هذا النموذج عب | 1
+MG_DATA(app) | saNote: 'Every sign-in and sign-out is logged with device, I | 1
+MG_DATA(app) | slNote: 'In this prototype the IP and approximate location c | 1
+MG_DATA(app) | D.axes → approved 49 services / 5 axes | 1
+MG_DATA(console) | @mgroup.sa | 7
+MG_DATA(console) | firm:'M GROUP LAW FIRM' | 1
+MG_DATA(console) | initials:{ar:'ف',en:'F'}, name:{ar:'فيصل المالكي',en:'Faisal | 1
+MG_DATA(console) | 'فيصل المالكي', 'Faisal Al-Malki' | 1
+MG_DATA(console) | demoPartner: 'فيصل · شريك' | 1
+MG_DATA(console) | demoPartner: 'Faisal · Partner' | 1
+MG_DATA(console) | الرئيس التنفيذي | 2
+MG_DATA(console) | lead lawyer + CEO | 1
+MG_DATA(console) | lead lawyer and CEO | 1
+MG_DATA(console) | بوابة مستقلة للشركاء المؤسسين | 1
+MG_DATA(console) | Private portal for founding partners | 1
+MG_DATA(console) | {key:'translation', name:{ar:'الترجمة القانونية',en:'Legal t | 1
+MG_DATA(console) | {key:'accounting', name:{ar:'محاسبة قانونية',en:'Legal accou | 1
+MG_DATA(console) | ويجب مطابقة النص مع المصدر الرسمي قبل الاعتماد والتوقيع.' | 1
+MG_DATA(console) | must be matched against the official text before approval an | 1
+MG_DATA(console) | svcSub: '53 تخصصًا · 7 محاور' | 1
+MG_DATA(console) | svcSub: '53 specialties · 7 practice axes' | 1
+MG_DATA(console) | saNote: 'كل دخول وخروج يُسجل مع الجهاز وعنوان IP والموقع الت | 1
+MG_DATA(console) | slNote: 'يُحدَّد عنوان IP والموقع التقريبي في هذا النموذج عب | 1
+MG_DATA(console) | saNote: 'Every sign-in and sign-out is logged with device, I | 1
+MG_DATA(console) | slNote: 'In this prototype the IP and approximate location c | 1
+MG_DATA(console) | D.axes → approved 49 services / 5 axes | 1
+MG_CONSOLE | en: 'M GROUP LAW FIRM', vat: '300000000000003', cr: '1010000 | 1
+MG_CONSOLE | branches → HQ + other cities by arrangement | 1
+MG_CONSOLE | branch: 'jed' | 5
+MG_CONSOLE | branch: 'khb' | 3
+MG_CONSOLE | @mgroup.sa | 1
+MG_CONSOLE | desc: 'مزامنة الجلسات والأحكام والوكالات والضبوط عبر إضافة ا | 1
+MG_CONSOLE | desc: 'روابط اجتماعات تلقائية مع العملاء' | 1
+MG_CONSOLE | desc: 'ربط Outlook وGmail بصندوق المكتب' | 1
+MG_CONSOLE | service: 'contracts' | 2
+MG_CONSOLE | service: 'investment' | 1
+MG_CONSOLE | service: 'merger' | 1
+MG_CONSOLE | service: 'franchise' | 1
+MG_CONSOLE | service: 'inheritance' | 1
+MG_CONSOLE | service: 'personal' | 1
+MG_CONSOLE | service: 'labor' | 2
+MG_CONSOLE | service: 'data' | 1
+MG_CONSOLE | service: 'ip' | 1
+MG_CONSOLE | service: 'realestate' | 1
+MG_CONSOLE | service: 'logistics' | 1
+MG_CONSOLE | service: 'energy' | 1
+MG_CONSOLE | service: 'waqf' | 1
+MG_CONSOLE | service: 'litigation' | 1
+MG_CONSOLE | service: 'enforcement' | 1
+app/template | محاماة - استشارات - تحكيم - توثيق - صياغة عقود - إدارة قانون | 1
+app/template | M GROUP LAW FIRM | 3
+app/template | anonymize() around window.claude.complete | 3
+app/template |   aiBase() { | 1
+app/template | قواعد صارمة: لا تختلق رقم مادة | 1
+app/template | اكتب بلغة قانونية قضائية دقيقة لا تحتمل التأويل. | 1
+app/template | removed ipapi.co / ipify.org lookups | 1
+app/template | selSvc: 'establish' | 1
+app/template | first: L(cu.name).replace(/^(د\.|Dr\.)\s*/, '').split(' ')[0 | 1
+console/template | محاماة - استشارات - تحكيم - توثيق - صياغة عقود - إدارة قانون | 1
+console/template | M GROUP LAW FIRM | 3
+console/template | anonymize() around window.claude.complete | 2
+console/template |   aiRules() { | 1
+console/template | قواعد صارمة: لا تختلق رقم مادة | 1
+console/template | أنت مساعد ملف قانوني لدى مجموعة إم القانونية. | 1
+console/template | مع مساعد قانوني يستند إلى الأنظمة ويكشف المخالفات. | 1
+console/template | الفروع والموارد البشرية | 2
+console/template | خمسة فروع بإدارة مركزية من كافد: | 1
+console/template | مع ربط كل عضو بفرعه وملفاته | 1
+console/template | 'كل الفروع' | 1
+console/template | >الفرع< | 2
+console/template | فرع {{ | 1
+console/template | فرع ${ | 1
+console/template | /litigation|labor|personal|enforcement|realestate|arbitratio | 2
+console/template | embed snippet → one-way intake form | 1
+console/template | وتُفتح واجهة الشركاء من رابط «دخول الشركاء» في الموقع. | 1
+console/template | https://meet.google.com/mgr- | 1
+console/template | r.service === 'contracts' | 2
+console/template | service: 'contracts', value: | 1
