@@ -139,10 +139,10 @@ async function cancelInvoice() {
     <p v-if="error" class="mb-4 rounded-lg border border-red-100 bg-red-50 p-3 text-sm text-red-600">{{ error }}</p>
 
     <div v-if="invoice" class="mb-4 flex flex-wrap gap-2">
-      <button v-if="invoice.status === 'Draft'" class="rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700" @click="issue">
+      <button v-if="invoice.status === 'Draft'" class="rounded-lg bg-brand-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-700" @click="issue">
         إصدار الفاتورة
       </button>
-      <button v-if="invoice.status === 'Issued'" class="rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700" @click="markPaid">
+      <button v-if="invoice.status === 'Issued'" class="rounded-lg bg-brand-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-700" @click="markPaid">
         تسجيل الدفع
       </button>
       <button v-if="invoice.status === 'Draft' || invoice.status === 'Issued'" class="rounded-lg border border-red-200 px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50" @click="cancelInvoice">
@@ -202,7 +202,7 @@ async function cancelInvoice() {
         <div>
           <div class="mb-2 flex items-center justify-between">
             <label class="block text-sm font-medium text-gray-700">بنود الفاتورة</label>
-            <button type="button" class="text-sm text-emerald-700 hover:underline" @click="addLine">إضافة بند</button>
+            <button type="button" class="text-sm text-brand-700 hover:underline" @click="addLine">إضافة بند</button>
           </div>
           <div v-for="(line, i) in form.lines" :key="i" class="mb-2 grid grid-cols-12 gap-2">
             <input v-model="line.description" placeholder="الوصف" class="col-span-6 rounded-lg border border-gray-300 px-2 py-1.5 text-sm" />
@@ -223,7 +223,7 @@ async function cancelInvoice() {
         <button
           type="submit"
           :disabled="saving"
-          class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+          class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50"
         >
           {{ saving ? '...جارٍ الحفظ' : 'حفظ' }}
         </button>

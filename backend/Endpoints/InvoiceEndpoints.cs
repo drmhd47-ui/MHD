@@ -181,7 +181,7 @@ public static class InvoiceEndpoints
             return Results.BadRequest(new { message = "الفاتورة صادرة بالفعل" });
 
         var settings = await db.OfficeSettings.FirstOrDefaultAsync();
-        var sellerName = settings?.FirmName ?? "M NEXUS للمحاماة والاستشارات القانونية";
+        var sellerName = settings?.FirmName ?? "مجموعة إم القانونية";
         var sellerVat = settings?.VatNumber ?? "";
         var year = DateTime.UtcNow.Year;
 

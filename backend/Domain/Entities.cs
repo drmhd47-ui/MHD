@@ -281,7 +281,7 @@ public class InvoiceLine
 public class OfficeSettings
 {
     public Guid Id { get; set; } = Guid.NewGuid();
-    public string FirmName { get; set; } = "M NEXUS للمحاماة والاستشارات القانونية";
+    public string FirmName { get; set; } = "مجموعة إم القانونية";
     public string? VatNumber { get; set; }
     public string? CommercialRegistrationNumber { get; set; }
     public string? Address { get; set; }
@@ -289,5 +289,59 @@ public class OfficeSettings
     public string? Email { get; set; }
     public decimal DefaultVatRate { get; set; } = 0.15m;
 
+    /// <summary>المحامي المناوب الذي يُشعَر بطلبات الموقع الواردة. إن لم يُحدَّد يُشعَر المديرون.</summary>
+    public Guid? OnDutyUserId { get; set; }
+
     public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
+}
+
+public enum IntakeRequestStatus
+{
+    New = 1,
+    InReview = 2,
+    Converted = 3,
+    Declined = 4
+}
+
+public enum PreferredContact
+{
+    Phone = 1,
+    Email = 2
+}
+
+/// <summary>
+/// طلب استشارة وارد من الموقع العام عبر خادم الاستقبال. ليس عميلاً بعد: يراجعه محامٍ، ويمر بفحص
+/// تعارض المصالح، ثم يُحوَّل إلى عميل أو يُعتذر عنه. المعرّف يأتي من خادم الاستقبال فيمنع التكرار عند إعادة الإرسال.
+/// الطلبات المعتذر عنها تُجهَّل بياناتها الشخصية بعد مدة الاحتفاظ (IntakeRetentionService).
+/// </summary>
+public class IntakeRequest
+{
+    public Guid Id { get; set; }
+    public string Reference { get; set; } = default!;
+    public DateTimeOffset SubmittedAt { get; set; }
+    public DateTimeOffset ReceivedAt { get; set; } = DateTimeOffset.UtcNow;
+    public string Language { get; set; } = "ar";
+
+    public string FullName { get; set; } = default!;
+    public PreferredContact PreferredContact { get; set; }
+    public string? Phone { get; set; }
+    public string? Email { get; set; }
+    public string? ServiceSlug { get; set; }
+    public string? ServiceTitle { get; set; }
+    /// <summary>اسم الطرف الآخر كما كتبه مقدم الطلب — لفحص تعارض المصالح فقط.</summary>
+    public string? OpposingPartyName { get; set; }
+
+    public DateTimeOffset ConsentAt { get; set; }
+    public string PrivacyPolicyVersion { get; set; } = default!;
+
+    public IntakeRequestStatus Status { get; set; } = IntakeRequestStatus.New;
+    public Guid? AssignedUserId { get; set; }
+    public User? AssignedUser { get; set; }
+    public Guid? ConvertedClientId { get; set; }
+    public string? DeclineReason { get; set; }
+    /// <summary>مبرر المحامي عند التحويل رغم وجود تطابق في فحص التعارض — يُحفظ ويُسجَّل في سجل التدقيق.</summary>
+    public string? ConflictAcknowledgement { get; set; }
+    public Guid? ClosedByUserId { get; set; }
+    public DateTimeOffset? ClosedAt { get; set; }
+    public DateTimeOffset? AnonymizedAt { get; set; }
 }

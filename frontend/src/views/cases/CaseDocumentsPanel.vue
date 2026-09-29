@@ -65,7 +65,7 @@ function formatSize(bytes: number): string {
     <div class="mb-4 flex items-center justify-between">
       <h2 class="text-base font-bold text-gray-900">المستندات والعقود</h2>
       <label
-        class="cursor-pointer rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700"
+        class="cursor-pointer rounded-lg bg-brand-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-700"
         :class="{ 'pointer-events-none opacity-50': uploading }"
       >
         {{ uploading ? '...جارٍ الرفع' : 'رفع مستند' }}
@@ -93,7 +93,7 @@ function formatSize(bytes: number): string {
           <td class="py-2">{{ formatSize(d.sizeBytes) }}</td>
           <td class="py-2">{{ new Date(d.uploadedAt).toLocaleDateString('ar-SA') }}</td>
           <td class="py-2">
-            <button class="ml-3 text-emerald-700 hover:underline" @click="download(d)">تحميل</button>
+            <button class="ml-3 text-brand-700 hover:underline" @click="download(d)">تحميل</button>
             <button class="text-red-600 hover:underline" @click="archive(d)">أرشفة</button>
           </td>
         </tr>

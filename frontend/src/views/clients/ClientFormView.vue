@@ -116,7 +116,7 @@ async function save() {
         <button
           type="submit"
           :disabled="saving"
-          class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+          class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50"
         >
           {{ saving ? '...جارٍ الحفظ' : 'حفظ' }}
         </button>

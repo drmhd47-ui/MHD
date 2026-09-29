@@ -9,5 +9,12 @@ body,
 }
 
 body {
-  font-family: 'Tajawal', system-ui, sans-serif;
+  font-family: 'Noto Naskh Arabic', system-ui, sans-serif;
+  font-style: normal;
+}
+
+/* لا خط مائل في أي موضع (الهوية الرسمية). */
+i,
+em {
+  font-style: normal;
 }

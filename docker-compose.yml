@@ -19,6 +19,12 @@ services:
       Jwt__Audience: ${JWT_AUDIENCE:-mhd-legal-client}
       Security__FieldEncryptionKey: ${STORAGE_KEY}
       Cors__AllowedOrigins__0: ${PUBLIC_ORIGIN}
+      Intake__SharedSecret: ${INTAKE_SHARED_SECRET}
+      Smtp__Host: ${SMTP_HOST:-}
+      Smtp__Port: ${SMTP_PORT:-587}
+      Smtp__User: ${SMTP_USER:-}
+      Smtp__Password: ${SMTP_PASS:-}
+      Smtp__From: ${SMTP_FROM:-no-reply@mgrp.sa}
       Seed__ManagerEmail: ${MANAGER_EMAIL}
       Seed__ManagerPassword: ${MANAGER_TEMP_PASSWORD}
     volumes:

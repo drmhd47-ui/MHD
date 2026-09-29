@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import api, { apiErrorMessage } from '@/api/client'
+import type { ManagedUser } from '@/api/types'
 
 const form = ref({
   firmName: '',
@@ -9,16 +10,19 @@ const form = ref({
   address: '',
   phone: '',
   email: '',
-  defaultVatRate: 0.15
+  defaultVatRate: 0.15,
+  onDutyUserId: null as string | null
 })
+const users = ref<ManagedUser[]>([])
 
 const error = ref('')
 const success = ref(false)
 const saving = ref(false)
 
 onMounted(async () => {
-  const { data } = await api.get('/office-settings')
+  const [{ data }, usersRes] = await Promise.all([api.get('/office-settings'), api.get<ManagedUser[]>('/users')])
   form.value = { ...form.value, ...data }
+  users.value = usersRes.data.filter((u) => u.isActive)
 })
 
 async function save() {
@@ -41,7 +45,7 @@ async function save() {
     <h1 class="mb-6 text-xl font-bold text-gray-900">إعدادات المكتب</h1>
 
     <p v-if="error" class="mb-4 rounded-lg border border-red-100 bg-red-50 p-3 text-sm text-red-600">{{ error }}</p>
-    <p v-if="success" class="mb-4 rounded-lg border border-emerald-100 bg-emerald-50 p-3 text-sm text-emerald-700">
+    <p v-if="success" class="mb-4 rounded-lg border border-brand-100 bg-brand-50 p-3 text-sm text-brand-700">
       تم الحفظ بنجاح
     </p>
 
@@ -78,11 +82,19 @@ async function save() {
         <label class="mb-1 block text-sm font-medium text-gray-700">نسبة الضريبة الافتراضية</label>
         <input v-model.number="form.defaultVatRate" type="number" step="0.01" min="0" max="1" class="w-40 rounded-lg border border-gray-300 px-3 py-2 text-sm" />
       </div>
+      <div>
+        <label class="mb-1 block text-sm font-medium text-gray-700" for="on-duty">المحامي المناوب لطلبات الموقع</label>
+        <select id="on-duty" v-model="form.onDutyUserId" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
+          <option :value="null">غير محدد — يُشعَر المديرون</option>
+          <option v-for="u in users" :key="u.id" :value="u.id">{{ u.fullName }}</option>
+        </select>
+        <p class="mt-1 text-xs text-gray-500">يصله إشعار بريدي برقم كل طلب جديد فقط، بلا بيانات مقدم الطلب.</p>
+      </div>
       <div class="flex justify-end">
         <button
           type="submit"
           :disabled="saving"
-          class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+          class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50"
         >
           {{ saving ? '...جارٍ الحفظ' : 'حفظ' }}
         </button>

@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using MHD.Api.Data;
 using MHD.Api.Endpoints;
 using MHD.Api.Security;
+using MHD.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,9 @@ builder.Services.AddSingleton<JwtTokenService>();
 builder.Services.AddSingleton<EncryptionService>();
 builder.Services.AddSingleton<DocumentStorage>();
 builder.Services.AddScoped<AuditLogger>();
+builder.Services.AddScoped<ConflictChecker>();
+builder.Services.AddSingleton<Notifier>();
+builder.Services.AddHostedService<IntakeRetentionService>();
 
 var jwtKey = builder.Configuration["Jwt:Key"];
 if (string.IsNullOrWhiteSpace(jwtKey) || Convert.FromBase64String(jwtKey).Length < 32)
@@ -91,6 +95,17 @@ builder.Services.AddRateLimiter(options =>
             {
                 PermitLimit = 5,
                 Window = TimeSpan.FromMinutes(5),
+                QueueLimit = 0
+            }));
+
+    // نقطة استلام طلبات الموقع: يستدعيها خادم الاستقبال وحده، وتحديدها يحد من أثر أي تسريب للسر المشترك.
+    options.AddPolicy("intake-internal", context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 60,
+                Window = TimeSpan.FromMinutes(1),
                 QueueLimit = 0
             }));
 
@@ -159,14 +174,22 @@ app.MapLegalReferenceEndpoints();
 app.MapTimeEntryEndpoints();
 app.MapInvoiceEndpoints();
 app.MapOfficeSettingsEndpoints();
+app.MapIntakeRequestEndpoints();
 
 app.MapGet("/health", () => Results.Ok(new { status = "ok" })).AllowAnonymous();
 
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    await db.Database.MigrateAsync();
+    // بيئة الاختبارات الآلية تستخدم قاعدة مؤقتة تُنشأ من النموذج مباشرة؛ الإنتاج والتطوير عبر الهجرات فقط.
+    if (app.Environment.IsEnvironment("Testing"))
+        await db.Database.EnsureCreatedAsync();
+    else
+        await db.Database.MigrateAsync();
     await DbSeeder.SeedAsync(db, app.Configuration);
 }
 
 app.Run();
+
+/// <summary>مرئي لمشروع الاختبارات (WebApplicationFactory).</summary>
+public partial class Program;

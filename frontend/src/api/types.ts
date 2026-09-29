@@ -165,5 +165,45 @@ export interface OfficeSettingsData {
   phone?: string | null
   email?: string | null
   defaultVatRate: number
+  onDutyUserId?: string | null
   updatedAt: string
+}
+
+export type IntakeRequestStatus = 'New' | 'InReview' | 'Converted' | 'Declined'
+export type PreferredContact = 'Phone' | 'Email'
+
+export interface IntakeRequestListItem {
+  id: string
+  reference: string
+  submittedAt: string
+  fullName: string
+  serviceTitle?: string | null
+  preferredContact: PreferredContact
+  status: IntakeRequestStatus
+  assignedUserName?: string | null
+}
+
+export interface IntakeConflict {
+  kind: 'ApplicantIsOpposingParty' | 'ApplicantIsExistingClient' | 'OtherPartyIsClient' | 'OtherPartyIsOpposingParty'
+  blocking: boolean
+  name: string
+  detail: string
+}
+
+export interface IntakeRequestDetail extends IntakeRequestListItem {
+  receivedAt: string
+  language: 'ar' | 'en'
+  phone?: string | null
+  email?: string | null
+  serviceSlug?: string | null
+  opposingPartyName?: string | null
+  consentAt: string
+  privacyPolicyVersion: string
+  convertedClientId?: string | null
+  declineReason?: string | null
+  conflictAcknowledgement?: string | null
+  closedAt?: string | null
+  anonymizedAt?: string | null
+  conflicts: IntakeConflict[]
+  hasBlockingConflict: boolean
 }

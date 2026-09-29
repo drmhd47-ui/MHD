@@ -18,6 +18,17 @@ const router = createRouter({
       component: () => import('@/layouts/AppShell.vue'),
       children: [
         { path: '', name: 'dashboard', component: () => import('@/views/DashboardView.vue') },
+        {
+          path: 'intake-requests',
+          name: 'intake-requests',
+          component: () => import('@/views/intake/IntakeRequestsListView.vue')
+        },
+        {
+          path: 'intake-requests/:id',
+          name: 'intake-request',
+          component: () => import('@/views/intake/IntakeRequestDetailView.vue'),
+          props: true
+        },
         { path: 'clients', name: 'clients', component: () => import('@/views/clients/ClientsListView.vue') },
         { path: 'clients/new', name: 'client-new', component: () => import('@/views/clients/ClientFormView.vue') },
         {

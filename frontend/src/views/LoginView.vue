@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import logo from '@/assets/logo-mark.svg'
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
@@ -87,8 +88,15 @@ async function submitTotp() {
 <template>
   <div class="flex min-h-screen items-center justify-center bg-gray-50" dir="rtl">
     <div class="w-full max-w-sm rounded-xl border border-gray-100 bg-white p-8 shadow-sm">
-      <h1 class="mb-1 text-xl font-bold text-emerald-700">M NEXUS</h1>
-      <p class="mb-6 text-sm text-gray-500">النظام الداخلي لإدارة المكتب</p>
+      <div class="mb-6 flex items-center gap-3">
+        <span class="rounded-lg border border-gold bg-cream p-1.5">
+          <img :src="logo" alt="" class="h-16 w-auto" />
+        </span>
+        <div>
+          <h1 class="text-xl font-bold text-brand-700">مجموعة إم القانونية</h1>
+          <p class="text-sm text-gray-500">النظام الداخلي لإدارة المكتب</p>
+        </div>
+      </div>
 
       <p v-if="error" class="mb-4 rounded-lg border border-red-100 bg-red-50 p-3 text-sm text-red-600">{{ error }}</p>
 
@@ -99,7 +107,7 @@ async function submitTotp() {
             v-model="email"
             type="email"
             required
-            class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-emerald-500"
+            class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:ring-brand-500"
           />
         </div>
         <div>
@@ -108,13 +116,13 @@ async function submitTotp() {
             v-model="password"
             type="password"
             required
-            class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-emerald-500"
+            class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:ring-brand-500"
           />
         </div>
         <button
           type="submit"
           :disabled="loading"
-          class="w-full rounded-lg bg-emerald-600 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+          class="w-full rounded-lg bg-brand-600 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50"
         >
           {{ loading ? '...جارٍ الدخول' : 'تسجيل الدخول' }}
         </button>
@@ -135,7 +143,7 @@ async function submitTotp() {
         <button
           type="submit"
           :disabled="loading"
-          class="w-full rounded-lg bg-emerald-600 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+          class="w-full rounded-lg bg-brand-600 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50"
         >
           {{ loading ? '...جارٍ الحفظ' : 'حفظ ومتابعة' }}
         </button>
@@ -156,7 +164,7 @@ async function submitTotp() {
         <button
           type="submit"
           :disabled="loading"
-          class="w-full rounded-lg bg-emerald-600 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+          class="w-full rounded-lg bg-brand-600 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50"
         >
           {{ loading ? '...جارٍ التحقق' : 'تحقق' }}
         </button>

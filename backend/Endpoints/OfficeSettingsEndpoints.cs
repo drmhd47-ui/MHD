@@ -18,7 +18,7 @@ public static class OfficeSettingsEndpoints
 
     private record OfficeSettingsRequest(
         string FirmName, string? VatNumber, string? CommercialRegistrationNumber,
-        string? Address, string? Phone, string? Email, decimal DefaultVatRate);
+        string? Address, string? Phone, string? Email, decimal DefaultVatRate, Guid? OnDutyUserId);
 
     private static string ClientIp(HttpContext http) => http.Connection.RemoteIpAddress?.ToString() ?? "unknown";
     private static string ActorName(HttpContext http) => http.User.Identity?.Name ?? "";
@@ -51,6 +51,10 @@ public static class OfficeSettingsEndpoints
         settings.Phone = req.Phone;
         settings.Email = req.Email;
         settings.DefaultVatRate = req.DefaultVatRate;
+
+        if (req.OnDutyUserId is Guid onDuty && !await db.Users.AnyAsync(u => u.Id == onDuty && u.IsActive))
+            return Results.BadRequest(new { message = "المحامي المناوب غير موجود أو معطّل" });
+        settings.OnDutyUserId = req.OnDutyUserId;
         settings.UpdatedAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync();
 

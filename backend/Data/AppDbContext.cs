@@ -17,6 +17,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Invoice> Invoices => Set<Invoice>();
     public DbSet<InvoiceLine> InvoiceLines => Set<InvoiceLine>();
     public DbSet<OfficeSettings> OfficeSettings => Set<OfficeSettings>();
+    public DbSet<IntakeRequest> IntakeRequests => Set<IntakeRequest>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -167,6 +168,30 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         {
             e.Property(o => o.FirmName).HasMaxLength(300).IsRequired();
             e.Property(o => o.DefaultVatRate).HasColumnType("decimal(5,4)");
+        });
+
+        modelBuilder.Entity<IntakeRequest>(e =>
+        {
+            e.Property(r => r.Id).ValueGeneratedNever();
+            e.HasIndex(r => r.Reference).IsUnique();
+            e.HasIndex(r => r.Status);
+            e.HasIndex(r => r.SubmittedAt);
+            e.Property(r => r.Reference).HasMaxLength(20).IsRequired();
+            e.Property(r => r.Language).HasMaxLength(5).IsRequired();
+            e.Property(r => r.FullName).HasMaxLength(120).IsRequired();
+            e.Property(r => r.Phone).HasMaxLength(20);
+            e.Property(r => r.Email).HasMaxLength(160);
+            e.Property(r => r.ServiceSlug).HasMaxLength(80);
+            e.Property(r => r.ServiceTitle).HasMaxLength(200);
+            e.Property(r => r.OpposingPartyName).HasMaxLength(160);
+            e.Property(r => r.PrivacyPolicyVersion).HasMaxLength(20).IsRequired();
+            e.Property(r => r.DeclineReason).HasMaxLength(500);
+            e.Property(r => r.ConflictAcknowledgement).HasMaxLength(500);
+
+            e.HasOne(r => r.AssignedUser)
+                .WithMany()
+                .HasForeignKey(r => r.AssignedUserId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
     }
 

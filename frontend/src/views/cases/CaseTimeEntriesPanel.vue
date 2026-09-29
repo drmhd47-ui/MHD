@@ -52,7 +52,7 @@ const totalHours = () => entries.value.reduce((sum, e) => sum + e.hours, 0)
       <input v-model="form.workDate" type="date" required class="col-span-3 rounded-lg border border-gray-300 px-2 py-1.5 text-sm" />
       <input v-model.number="form.hours" type="number" step="0.25" min="0.25" required class="col-span-2 rounded-lg border border-gray-300 px-2 py-1.5 text-sm" />
       <input v-model="form.description" placeholder="وصف العمل" required class="col-span-5 rounded-lg border border-gray-300 px-2 py-1.5 text-sm" />
-      <button type="submit" :disabled="saving" class="col-span-2 rounded-lg bg-emerald-600 px-2 py-1.5 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50">
+      <button type="submit" :disabled="saving" class="col-span-2 rounded-lg bg-brand-600 px-2 py-1.5 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50">
         إضافة
       </button>
     </form>

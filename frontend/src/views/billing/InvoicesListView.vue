@@ -29,7 +29,7 @@ const statusLabel: Record<InvoiceStatus, string> = { Draft: 'مسودة', Issued
       <h1 class="text-xl font-bold text-gray-900">الفواتير والمدفوعات</h1>
       <router-link
         to="/invoices/new"
-        class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
+        class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
       >
         فاتورة جديدة
       </router-link>
@@ -57,7 +57,7 @@ const statusLabel: Record<InvoiceStatus, string> = { Draft: 'مسودة', Issued
         <tbody>
           <tr v-for="i in invoices" :key="i.id" class="border-t border-gray-100 hover:bg-gray-50">
             <td class="px-4 py-3">
-              <router-link :to="`/invoices/${i.id}`" class="font-medium text-emerald-700">{{ i.invoiceNumber || 'مسودة' }}</router-link>
+              <router-link :to="`/invoices/${i.id}`" class="font-medium text-brand-700">{{ i.invoiceNumber || 'مسودة' }}</router-link>
             </td>
             <td class="px-4 py-3">{{ i.client?.fullName || '—' }}</td>
             <td class="px-4 py-3">{{ i.issueDate }}</td>

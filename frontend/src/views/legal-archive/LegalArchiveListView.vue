@@ -44,7 +44,7 @@ const typeLabel: Record<LegalReferenceType, string> = {
       <h1 class="text-xl font-bold text-gray-900">الأرشيف القانوني</h1>
       <router-link
         to="/legal-archive/new"
-        class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
+        class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
       >
         إضافة مرجع
       </router-link>
@@ -80,7 +80,7 @@ const typeLabel: Record<LegalReferenceType, string> = {
         <tbody>
           <tr v-for="l in items" :key="l.id" class="border-t border-gray-100 hover:bg-gray-50">
             <td class="px-4 py-3">
-              <router-link :to="`/legal-archive/${l.id}`" class="font-medium text-emerald-700">{{ l.title }}</router-link>
+              <router-link :to="`/legal-archive/${l.id}`" class="font-medium text-brand-700">{{ l.title }}</router-link>
             </td>
             <td class="px-4 py-3">{{ typeLabel[l.type] }}</td>
             <td class="px-4 py-3">{{ l.issuingAuthority || '—' }}</td>

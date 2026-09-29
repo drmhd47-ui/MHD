@@ -32,7 +32,7 @@ watch(search, () => {
       <h1 class="text-xl font-bold text-gray-900">العملاء</h1>
       <router-link
         to="/clients/new"
-        class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
+        class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
       >
         عميل جديد
       </router-link>
@@ -58,7 +58,7 @@ watch(search, () => {
         <tbody>
           <tr v-for="c in clients" :key="c.id" class="border-t border-gray-100 hover:bg-gray-50">
             <td class="px-4 py-3">
-              <router-link :to="`/clients/${c.id}`" class="font-medium text-emerald-700">{{ c.fullName }}</router-link>
+              <router-link :to="`/clients/${c.id}`" class="font-medium text-brand-700">{{ c.fullName }}</router-link>
             </td>
             <td class="px-4 py-3">{{ c.type === 'Individual' ? 'فرد' : 'شركة' }}</td>
             <td class="px-4 py-3">{{ c.phone || '—' }}</td>

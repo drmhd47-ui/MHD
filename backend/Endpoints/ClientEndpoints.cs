@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using MHD.Api.Data;
 using MHD.Api.Domain;
 using MHD.Api.Security;
+using MHD.Api.Services;
 
 namespace MHD.Api.Endpoints;
 
@@ -35,23 +36,9 @@ public static class ClientEndpoints
     }
 
     /// <summary>فحص تعارض المصالح: يبحث في العملاء الحاليين وفي أسماء الأطراف المقابلة بالقضايا القائمة.</summary>
-    private static async Task<IResult> ConflictCheck(string? q, AppDbContext db)
+    private static async Task<IResult> ConflictCheck(string? q, ConflictChecker checker)
     {
-        var term = (q ?? "").Trim();
-        if (term.Length < 3)
-            return Results.Ok(new { matches = Array.Empty<object>(), hasConflict = false });
-
-        var clientMatches = await db.Clients
-            .Where(c => c.FullName.Contains(term) || (c.NationalIdOrCr != null && c.NationalIdOrCr.Contains(term)))
-            .Select(c => new { c.Id, c.FullName, Reason = "عميل حالي للمكتب" })
-            .ToListAsync();
-
-        var opposingMatches = await db.Cases
-            .Where(c => c.OpposingPartyName != null && c.OpposingPartyName.Contains(term))
-            .Select(c => new { c.Id, FullName = c.OpposingPartyName!, Reason = "طرف مقابل في قضية قائمة: " + c.CaseNumber })
-            .ToListAsync();
-
-        var matches = clientMatches.Cast<object>().Concat(opposingMatches.Cast<object>()).ToList();
+        var matches = await checker.CheckAsync(q);
         return Results.Ok(new { matches, hasConflict = matches.Count > 0 });
     }
 

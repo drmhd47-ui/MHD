@@ -51,7 +51,7 @@ async function confirm() {
     </div>
 
     <p v-if="error" class="mb-4 rounded-lg border border-red-100 bg-red-50 p-3 text-sm text-red-600">{{ error }}</p>
-    <p v-if="success" class="mb-4 rounded-lg border border-emerald-100 bg-emerald-50 p-3 text-sm text-emerald-700">
+    <p v-if="success" class="mb-4 rounded-lg border border-brand-100 bg-brand-50 p-3 text-sm text-brand-700">
       تم التفعيل بنجاح
     </p>
 
@@ -69,7 +69,7 @@ async function confirm() {
       <button
         type="submit"
         :disabled="loading"
-        class="w-full rounded-lg bg-emerald-600 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+        class="w-full rounded-lg bg-brand-600 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50"
       >
         {{ loading ? '...جارٍ التحقق' : 'تأكيد وتفعيل' }}
       </button>

@@ -32,7 +32,7 @@ const typeLabel: Record<string, string> = { Hearing: 'جلسة', Meeting: 'اج�
       <h1 class="text-xl font-bold text-gray-900">الجدولة والمواعيد</h1>
       <router-link
         to="/appointments/new"
-        class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
+        class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
       >
         موعد جديد
       </router-link>
@@ -53,7 +53,7 @@ const typeLabel: Record<string, string> = { Hearing: 'جلسة', Meeting: 'اج�
         <tbody>
           <tr v-for="a in appointments" :key="a.id" class="border-t border-gray-100 hover:bg-gray-50">
             <td class="px-4 py-3">
-              <router-link :to="`/appointments/${a.id}`" class="font-medium text-emerald-700">{{ a.title }}</router-link>
+              <router-link :to="`/appointments/${a.id}`" class="font-medium text-brand-700">{{ a.title }}</router-link>
             </td>
             <td class="px-4 py-3">{{ typeLabel[a.type] }}</td>
             <td class="px-4 py-3">{{ a.case?.caseNumber || '—' }}</td>
