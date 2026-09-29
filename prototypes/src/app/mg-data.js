@@ -63,7 +63,7 @@ team:[
 {id:'abdullah', initials:{ar:'ع',en:'A'}, name:{ar:'عبدالله الزهراني (تجريبي)',en:'Abdullah Al-Zahrani (demo)'}, role:{ar:'محامٍ شريك',en:'Partner'}, online:true},
 {id:'noura', initials:{ar:'ن',en:'N'}, name:{ar:'نورة القحطاني (تجريبي)',en:'Noura Al-Qahtani (demo)'}, role:{ar:'مستشارة حوكمة',en:'Governance Counsel'}, online:false},
 {id:'reem', initials:{ar:'ر',en:'R'}, name:{ar:'ريم الدوسري (تجريبي)',en:'Reem Al-Dosari (demo)'}, role:{ar:'مترجمة قانونية',en:'Legal Translator'}, online:true},
-{id:'faisal', initials:{ar:'م',en:'M'}, name:{ar:'الدكتور محمد العنزي',en:'Dr. Mohammed Al-Anazi'}, role:{ar:'الشريك الإداري',en:'Managing Partner'}, online:true}
+{id:'faisal', initials:{ar:'م',en:'M'}, name:{ar:'الدكتور محمد بن جمعان العنزي',en:'Dr. Mohammed bin Jamaan Al-Anazi'}, role:{ar:'الشريك الإداري',en:'Managing Partner'}, online:true}
 ],
 clients:[
 {id:'noor', name:{ar:'شركة النور التجارية',en:'Al Noor Trading Co.'}, contact:{ar:'أحمد الشمري',en:'Ahmed Al-Shammari'}},
@@ -274,7 +274,7 @@ sources:[
   D.defaultPerms = cls => { const p = {}; D.permKeys.forEach(k => p[k] = k === 'view'); if (cls === 'p_admin') D.permKeys.forEach(k => p[k] = true); else if (cls === 'p_prof' || cls === 'p_consult') D.permKeys.forEach(k => p[k] = k !== 'users'); return p; };
   const U = (id, cls, ar, en, email, mobile, nid, license, online) => ({ id, username: id, pass: 'Mg@2026', cls, name: { ar, en }, initials: { ar: ar.replace(/^د\.\s*/, '')[0], en: en.replace(/^Dr\.\s*/, '')[0] }, email, mobile, nid, license, online, locked: null });
   D.team = [
-    U('faisal', 'p_admin', 'الدكتور محمد العنزي', 'Dr. Mohammed Al-Anazi', 'faisal@mgrp.sa', '+966 55 210 4401', '1010000001', '', true),
+    U('faisal', 'p_admin', 'الدكتور محمد بن جمعان العنزي', 'Dr. Mohammed bin Jamaan Al-Anazi', 'faisal@mgrp.sa', '+966 55 210 4401', '1010000001', '', true),
     U('hind', 'p_consult', 'المستشار محمد سعد', 'Counsel Mohammed Saad', 'hind@mgrp.sa', '+966 55 210 4402', '1010000002', '', true),
     U('abdullah', 'p_prof', 'عبدالله الزهراني (تجريبي)', 'Abdullah Al-Zahrani (demo)', 'abdullah@mgrp.sa', '+966 55 210 4403', '1010000003', 'L-38112', true),
     U('sara', 'lawyer', 'ضي حمد آل شيبان', 'Dhai Hamad Al Shaiban', 'sara@mgrp.sa', '+966 55 210 4404', '1010000004', '', true),

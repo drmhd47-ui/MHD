@@ -46,7 +46,7 @@ export const company = {
   partnersTrackRecord: { cases: 4700, contracts: 4000, consultations: 14000 },
   managingPartner: {
     ar: {
-      name: 'الدكتور محمد بن جمعان',
+      name: 'الدكتور محمد بن جمعان العنزي',
       role: 'الشريك الإداري',
       experience: 'أكثر من 30 عاماً من العمل الحكومي والدبلوماسي والمؤسسي في إدارة العقود والميزانية والإدارة.',
       education: [
@@ -57,7 +57,7 @@ export const company = {
       ]
     },
     en: {
-      name: 'Dr. Mohammed bin Jamaan',
+      name: 'Dr. Mohammed bin Jamaan Al-Anazi',
       role: 'Managing Partner',
       experience: 'More than 30 years of governmental, diplomatic and institutional experience in contracts, budget and administration.',
       education: [

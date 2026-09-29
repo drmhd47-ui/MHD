@@ -23,7 +23,7 @@ public static class DbSeeder
         db.Users.Add(new User
         {
             // الحساب الأول هو حساب الشريك الإداري؛ ويُنشئ هو بقية حسابات الفريق من شاشة المستخدمين.
-            FullName = config["Seed:ManagerName"] ?? "الدكتور محمد العنزي",
+            FullName = config["Seed:ManagerName"] ?? "الدكتور محمد بن جمعان العنزي",
             Title = config["Seed:ManagerTitle"] ?? "الشريك الإداري",
             Email = email,
             Role = UserRole.Manager,
