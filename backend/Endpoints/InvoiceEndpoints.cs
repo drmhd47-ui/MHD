@@ -25,6 +25,22 @@ public static class InvoiceEndpoints
         group.MapPost("/{id:guid}/issue", Issue);
         group.MapPost("/{id:guid}/mark-paid", MarkPaid);
         group.MapPost("/{id:guid}/cancel", Cancel);
+        group.MapGet("/vat-status", VatStatus);
+    }
+
+    /// <summary>حد التسجيل الإلزامي في ضريبة القيمة المضافة (إيرادات 12 شهراً)، وحد التسجيل الاختياري.</summary>
+    public const decimal MandatoryVatThreshold = 375_000m;
+    public const decimal VoluntaryVatThreshold = 187_500m;
+
+    /// <summary>
+    /// الشركة غير مسجلة في ضريبة القيمة المضافة ما لم تُفعَّل في الإعدادات برقم تسجيل صحيح (15 رقماً).
+    /// غير المسجَّل لا يحتسب ضريبة ولا يطبع رقماً ضريبياً ولا يصدر فاتورة ضريبية.
+    /// </summary>
+    private static async Task<(bool Registered, string? VatNumber, decimal Rate)> VatSetup(AppDbContext db)
+    {
+        var s = await db.OfficeSettings.FirstOrDefaultAsync();
+        var registered = s is { IsVatRegistered: true } && OfficeSettingsEndpoints.IsValidVatNumber(s.VatNumber);
+        return (registered, registered ? s!.VatNumber : null, registered ? (s!.DefaultVatRate > 0 ? s.DefaultVatRate : 0.15m) : 0m);
     }
 
     private record InvoiceLineRequest(string Description, decimal Quantity, decimal UnitPrice);
@@ -111,8 +127,8 @@ public static class InvoiceEndpoints
         var (lines, billedEntries, error) = await BuildLines(req, db);
         if (error is not null) return Results.BadRequest(new { message = error });
 
-        var vatRate = req.VatRate ?? await db.OfficeSettings.Select(o => o.DefaultVatRate).FirstOrDefaultAsync();
-        if (vatRate <= 0) vatRate = 0.15m;
+        var vat = await VatSetup(db);
+        var vatRate = vat.Registered ? (req.VatRate is > 0 ? req.VatRate.Value : vat.Rate) : 0m;
 
         var subtotal = lines.Sum(l => l.LineTotal);
         var vatAmount = Math.Round(subtotal * vatRate, 2);
@@ -160,7 +176,8 @@ public static class InvoiceEndpoints
         invoice.ClientId = req.ClientId;
         invoice.CaseId = req.CaseId;
         invoice.IssueDate = req.IssueDate;
-        invoice.VatRate = req.VatRate ?? invoice.VatRate;
+        var vat = await VatSetup(db);
+        invoice.VatRate = vat.Registered ? (req.VatRate is > 0 ? req.VatRate.Value : vat.Rate) : 0m;
         invoice.Lines = newLines;
         invoice.Subtotal = newLines.Sum(l => l.LineTotal);
         invoice.VatAmount = Math.Round(invoice.Subtotal * invoice.VatRate, 2);
@@ -182,7 +199,15 @@ public static class InvoiceEndpoints
 
         var settings = await db.OfficeSettings.FirstOrDefaultAsync();
         var sellerName = settings?.FirmName ?? "مجموعة إم القانونية";
-        var sellerVat = settings?.VatNumber ?? "";
+        var vat = await VatSetup(db);
+        // يُثبَّت وضع الضريبة وقت الإصدار: إن لم تكن الشركة مسجلة تصدر فاتورة عادية بلا ضريبة ولا رمز ضريبي،
+        // حتى لو أُنشئت المسودة قبل تغيير الإعداد.
+        if (!vat.Registered)
+        {
+            invoice.VatRate = 0m;
+            invoice.VatAmount = 0m;
+            invoice.Total = invoice.Subtotal;
+        }
         var year = DateTime.UtcNow.Year;
 
         const int maxAttempts = 5;
@@ -192,9 +217,12 @@ public static class InvoiceEndpoints
 
             invoice.InvoiceNumber = $"INV-{year}-{countThisYear + 1:D4}";
             invoice.SellerName = sellerName;
-            invoice.SellerVatNumber = sellerVat;
+            invoice.SellerVatNumber = vat.VatNumber;
+            invoice.IsTaxInvoice = vat.Registered;
             invoice.Status = InvoiceStatus.Issued;
-            invoice.QrCodeTlvBase64 = BuildZatcaQrTlv(sellerName, sellerVat, DateTimeOffset.UtcNow, invoice.Total, invoice.VatAmount);
+            invoice.QrCodeTlvBase64 = vat.Registered
+                ? BuildZatcaQrTlv(sellerName, vat.VatNumber!, DateTimeOffset.UtcNow, invoice.Total, invoice.VatAmount)
+                : null;
 
             try
             {
@@ -211,6 +239,36 @@ public static class InvoiceEndpoints
         }
 
         return Results.Json(new { message = "تعذّر إصدار رقم فاتورة فريد، حاول من جديد" }, statusCode: 409);
+    }
+
+    /// <summary>
+    /// مراقبة حد التسجيل: مجموع الفواتير الصادرة (قبل الضريبة) خلال آخر 12 شهراً مقابل حدَّي التسجيل.
+    /// تقدير داخلي للتنبيه فقط؛ العبرة بالإيرادات الخاضعة وفق نظام ضريبة القيمة المضافة ولائحته، ويُراجَع مع محاسب.
+    /// </summary>
+    private static async Task<IResult> VatStatus(AppDbContext db)
+    {
+        var vat = await VatSetup(db);
+        var since = DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(-12));
+        var revenue = (await db.Invoices
+            .Where(i => i.Status == InvoiceStatus.Issued || i.Status == InvoiceStatus.Paid)
+            .Select(i => new { i.IssueDate, i.Subtotal })
+            .ToListAsync())
+            .Where(i => i.IssueDate >= since)
+            .Sum(i => i.Subtotal);
+
+        var level = vat.Registered ? "registered"
+            : revenue > MandatoryVatThreshold ? "mandatory"
+            : revenue >= MandatoryVatThreshold * 0.8m ? "approaching"
+            : revenue > VoluntaryVatThreshold ? "voluntary"
+            : "below";
+        return Results.Ok(new
+        {
+            isVatRegistered = vat.Registered,
+            trailing12MonthsRevenue = revenue,
+            mandatoryThreshold = MandatoryVatThreshold,
+            voluntaryThreshold = VoluntaryVatThreshold,
+            level
+        });
     }
 
     private static async Task<IResult> MarkPaid(Guid id, MarkPaidRequest req, AppDbContext db, AuditLogger audit, HttpContext http)

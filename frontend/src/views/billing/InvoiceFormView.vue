@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import api, { apiErrorMessage } from '@/api/client'
-import type { Client, CaseItem, TimeEntry, Invoice } from '@/api/types'
+import type { Client, CaseItem, TimeEntry, Invoice, VatStatus } from '@/api/types'
 
 const props = defineProps<{ id?: string }>()
 const router = useRouter()
@@ -25,14 +25,22 @@ const form = ref({
 
 const error = ref('')
 const saving = ref(false)
+/** وضع الضريبة من إعدادات المكتب: غير المسجَّل لا يحتسب ضريبة (الخادم يفرض ذلك أيضاً). */
+const vatRegistered = ref(false)
 
 const statusLabel: Record<string, string> = { Draft: 'مسودة', Issued: 'صادرة', Paid: 'مدفوعة', Cancelled: 'ملغاة' }
 const canEditFinancials = computed(() => !invoice.value || invoice.value.status === 'Draft')
 
 onMounted(async () => {
-  const [clientsRes, casesRes] = await Promise.all([api.get<Client[]>('/clients'), api.get<CaseItem[]>('/cases')])
+  const [clientsRes, casesRes, vatRes] = await Promise.all([
+    api.get<Client[]>('/clients'),
+    api.get<CaseItem[]>('/cases'),
+    api.get<VatStatus>('/invoices/vat-status')
+  ])
   clients.value = clientsRes.data
   cases.value = casesRes.data
+  vatRegistered.value = vatRes.data.isVatRegistered
+  if (!vatRegistered.value) form.value.vatRate = 0
 
   if (isEdit) {
     const { data } = await api.get<Invoice>(`/invoices/${props.id}`)
@@ -152,7 +160,10 @@ async function cancelInvoice() {
 
     <div v-if="invoice?.invoiceNumber" class="mb-4 rounded-xl border border-gray-100 bg-white p-4 text-sm shadow-sm">
       <p><span class="text-gray-500">رقم الفاتورة:</span> <span class="font-medium">{{ invoice.invoiceNumber }}</span></p>
-      <p class="mt-1"><span class="text-gray-500">البائع:</span> {{ invoice.sellerName }} — {{ invoice.sellerVatNumber }}</p>
+      <p class="mt-1"><span class="text-gray-500">النوع:</span> {{ invoice.isTaxInvoice ? 'فاتورة ضريبية' : 'فاتورة (البائع غير مسجّل في ضريبة القيمة المضافة)' }}</p>
+      <p class="mt-1">
+        <span class="text-gray-500">البائع:</span> {{ invoice.sellerName }}<template v-if="invoice.sellerVatNumber"> — الرقم الضريبي {{ invoice.sellerVatNumber }}</template>
+      </p>
       <p v-if="invoice.qrCodeTlvBase64" class="mt-1 break-all text-xs text-gray-400">
         رمز QR (TLV مُرمَّز base64): {{ invoice.qrCodeTlvBase64 }}
       </p>
@@ -181,10 +192,11 @@ async function cancelInvoice() {
             <label class="mb-1 block text-sm font-medium text-gray-700">تاريخ الإصدار</label>
             <input v-model="form.issueDate" type="date" required class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
           </div>
-          <div>
+          <div v-if="vatRegistered">
             <label class="mb-1 block text-sm font-medium text-gray-700">نسبة الضريبة</label>
             <input v-model.number="form.vatRate" type="number" step="0.01" min="0" max="1" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
           </div>
+          <p v-else class="self-end text-xs text-gray-500">الشركة غير مسجّلة في ضريبة القيمة المضافة — لا تُحتسب ضريبة.</p>
         </div>
 
         <div v-if="!isEdit && form.caseId && unbilledEntries.length > 0" class="rounded-lg border border-gray-200 p-3">
@@ -215,7 +227,7 @@ async function cancelInvoice() {
 
       <div v-if="invoice" class="rounded-lg bg-gray-50 p-3 text-sm">
         <p>المجموع الفرعي: {{ invoice.subtotal.toFixed(2) }}</p>
-        <p>الضريبة: {{ invoice.vatAmount.toFixed(2) }}</p>
+        <p v-if="invoice.isTaxInvoice || invoice.vatAmount > 0">الضريبة: {{ invoice.vatAmount.toFixed(2) }}</p>
         <p class="font-bold">الإجمالي: {{ invoice.total.toFixed(2) }}</p>
       </div>
 

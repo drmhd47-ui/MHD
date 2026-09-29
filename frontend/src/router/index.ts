@@ -57,6 +57,29 @@ const router = createRouter({
           component: () => import('@/views/appointments/AppointmentFormView.vue'),
           props: true
         },
+        { path: 'hearings', name: 'hearings', component: () => import('@/views/hearings/HearingsListView.vue') },
+        { path: 'hearings/new', name: 'hearing-new', component: () => import('@/views/hearings/HearingFormView.vue') },
+        {
+          path: 'hearings/:id/report',
+          name: 'hearing-report',
+          component: () => import('@/views/hearings/HearingReportView.vue'),
+          props: true
+        },
+        {
+          path: 'hearings/:id',
+          name: 'hearing-edit',
+          component: () => import('@/views/hearings/HearingFormView.vue'),
+          props: true
+        },
+        { path: 'deadlines', name: 'deadlines', component: () => import('@/views/deadlines/DeadlinesBoardView.vue') },
+        { path: 'deadlines/new', name: 'deadline-new', component: () => import('@/views/deadlines/DeadlineFormView.vue') },
+        { path: 'deadlines/rules', name: 'deadline-rules', component: () => import('@/views/deadlines/DeadlineRulesView.vue') },
+        {
+          path: 'deadlines/:id',
+          name: 'deadline-edit',
+          component: () => import('@/views/deadlines/DeadlineFormView.vue'),
+          props: true
+        },
         { path: 'legal-archive', name: 'legal-archive', component: () => import('@/views/legal-archive/LegalArchiveListView.vue') },
         {
           path: 'legal-archive/new',

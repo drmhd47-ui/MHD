@@ -1,0 +1,64 @@
+app/MG_DATA | الدكتور محمد بن جمعان | 2
+app/MG_DATA | Dr. Mohammed bin Jumaan | 2
+app/MG_DATA | د. هند السبيعي | 1
+app/MG_DATA | Dr. Hind Al-Subaie | 1
+app/MG_DATA | {id:'sara', initials:{ar:'س',en:'S'}, name:{ar:'سارة العتيبي | 1
+app/MG_DATA | سارة العتيبي | 1
+app/MG_DATA | Sara Al-Otaibi | 1
+app/MG_DATA | demoStaff: 'سارة · محامية' | 1
+app/MG_DATA | demoStaff: 'Sara · Lawyer' | 1
+app/MG_DATA | 'sara@mgrp.sa', '+966 55 210 4404', '1010000004', 'L-41207' | 1
+app/MG_DATA | name: { ar: 'شريك استشاري', en: 'Consulting Partner' } | 1
+app/MG_DATA | عبدالله الزهراني | 2
+app/MG_DATA | Abdullah Al-Zahrani | 2
+app/MG_DATA | نورة القحطاني | 2
+app/MG_DATA | Noura Al-Qahtani | 2
+app/MG_DATA | ماجد العمري | 1
+app/MG_DATA | Majed Al-Omari | 1
+app/MG_DATA | ريم الدوسري | 2
+app/MG_DATA | Reem Al-Dosari | 2
+console/template | سارة العتيبي | 1
+console/template | مجموعة إم للمحاماة | 6
+console/template |   zatcaQR(v) {
+ | 1
+console/template | rq.qTotals = amt ? `المبلغ ${this.sar(amt)} + ضريبة 15% ${th | 1
+console/template |  + الضريبة = ${this.sar(q.amount * 1.15)} | 1
+console/template | title: v.type === 'tax' ? 'فاتورة ضريبية' : 'فاتورة ضريبية م | 1
+console/template | this.opts([['tax', 'فاتورة ضريبية (منشآت)'], ['simplified',  | 1
+console/template | * 1.15 | 8
+console/template | * 0.15 | 4
+console/template | <span>ضريبة القيمة المضافة 15%</span> | 1
+console/template | sub: 'شاملة ضريبة القيمة المضافة' | 1
+console/template | فواتير ضريبية ومبسطة متوافقة مع متطلبات الفوترة الإلكترونية، | 1
+console/template | type: v.type === 'tax' ? 'ضريبية' : 'مبسطة', | 1
+console/template | zatca: v.zatca === 'cleared' ? | 1
+console/template | zPill: this.pill(v.zatca === 'pending' ? 'gold' : 'navy') | 1
+console/template | <div>زاتكا</div> | 1
+console/template | إصدار الفاتورة الأولى (50%) وإرسالها لزاتكا | 1
+console/template | إصدار وإرسال لزاتكا | 1
+console/template |  وإرسالها لزاتكا` | 1
+console/template |  واعتُمدت من زاتكا وأُرسلت للعميل مع رابط الدفع | 1
+console/template |  واعتُمدت من زاتكا | 1
+console/MG_DATA | الدكتور محمد بن جمعان | 2
+console/MG_DATA | Dr. Mohammed bin Jumaan | 2
+console/MG_DATA | د. هند السبيعي | 1
+console/MG_DATA | Dr. Hind Al-Subaie | 1
+console/MG_DATA | {id:'sara', initials:{ar:'س',en:'S'}, name:{ar:'سارة العتيبي | 1
+console/MG_DATA | سارة العتيبي | 1
+console/MG_DATA | Sara Al-Otaibi | 1
+console/MG_DATA | demoStaff: 'سارة · محامية' | 1
+console/MG_DATA | demoStaff: 'Sara · Lawyer' | 1
+console/MG_DATA | 'sara@mgrp.sa', '+966 55 210 4404', '1010000004', 'L-41207' | 1
+console/MG_DATA | name: { ar: 'شريك استشاري', en: 'Consulting Partner' } | 1
+console/MG_DATA | عبدالله الزهراني | 2
+console/MG_DATA | Abdullah Al-Zahrani | 2
+console/MG_DATA | نورة القحطاني | 2
+console/MG_DATA | Noura Al-Qahtani | 2
+console/MG_DATA | ماجد العمري | 1
+console/MG_DATA | Majed Al-Omari | 1
+console/MG_DATA | ريم الدوسري | 2
+console/MG_DATA | Reem Al-Dosari | 2
+MG_CONSOLE | vat: '3150535051' | 1
+MG_CONSOLE | { key: 'zatca', name: 'زاتكا — فاتورة', desc: 'إصدار واعتماد | 1
+MG_CONSOLE | لمى الشهري | 1
+MG_CONSOLE | Lama Al-Shehri | 1

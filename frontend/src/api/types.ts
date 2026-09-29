@@ -5,6 +5,8 @@ export interface AuthUser {
   fullName: string
   email: string
   role: UserRole
+  title?: string | null
+  isLicensedLawyer?: boolean
   totpEnabled: boolean
 }
 
@@ -53,6 +55,9 @@ export interface ManagedUser {
   fullName: string
   email: string
   role: UserRole
+  title?: string | null
+  isLicensedLawyer: boolean
+  licenseNumber?: string | null
   isActive: boolean
   totpEnabled: boolean
   lastLoginAt?: string | null
@@ -147,6 +152,7 @@ export interface Invoice {
   vatRate: number
   vatAmount: number
   total: number
+  isTaxInvoice: boolean
   sellerName?: string | null
   sellerVatNumber?: string | null
   qrCodeTlvBase64?: string | null
@@ -165,6 +171,7 @@ export interface OfficeSettingsData {
   phone?: string | null
   email?: string | null
   defaultVatRate: number
+  isVatRegistered: boolean
   onDutyUserId?: string | null
   updatedAt: string
 }
@@ -206,4 +213,104 @@ export interface IntakeRequestDetail extends IntakeRequestListItem {
   anonymizedAt?: string | null
   conflicts: IntakeConflict[]
   hasBlockingConflict: boolean
+}
+
+export interface VatStatus {
+  isVatRegistered: boolean
+  trailing12MonthsRevenue: number
+  mandatoryThreshold: number
+  voluntaryThreshold: number
+  level: 'registered' | 'below' | 'voluntary' | 'approaching' | 'mandatory'
+}
+
+/** عضو في الفريق كما تعيده /api/team — بلا بريد ولا بيانات حساب. */
+export interface TeamMember {
+  id: string
+  fullName: string
+  title?: string | null
+  isLicensedLawyer: boolean
+  role: UserRole
+}
+
+export type HearingStatus = 'Scheduled' | 'Held' | 'Postponed' | 'Cancelled'
+
+export interface Hearing {
+  id: string
+  caseId: string
+  caseNumber?: string | null
+  caseTitle?: string | null
+  scheduledAt: string
+  court?: string | null
+  circuit?: string | null
+  location?: string | null
+  purpose?: string | null
+  lawyerId: string
+  lawyerName?: string | null
+  supportUserId?: string | null
+  supportUserName?: string | null
+  status: HearingStatus
+  report?: string | null
+  reportedAt?: string | null
+  nextHearingId?: string | null
+  createdAt: string
+}
+
+export interface DeadlineRule {
+  id: string
+  key: string
+  name: string
+  days: number
+  trigger: string
+  legalBasis?: string | null
+  isInternal: boolean
+  basisVerified: boolean
+  basisVerifiedAt?: string | null
+  isActive: boolean
+  sortOrder: number
+}
+
+export type DeadlineStatus = 'Open' | 'Completed' | 'Waived'
+
+export interface LegalDeadline {
+  id: string
+  caseId: string
+  caseNumber?: string | null
+  caseTitle?: string | null
+  ruleId?: string | null
+  title: string
+  legalBasis?: string | null
+  isInternal: boolean
+  basisVerified: boolean
+  triggerDate: string
+  days: number
+  dueDate: string
+  dueDateNote?: string | null
+  daysLeft: number
+  responsibleUserId: string
+  responsibleName?: string | null
+  backupUserId: string
+  backupName?: string | null
+  createdByUserId: string
+  verifiedByUserId?: string | null
+  verifiedAt?: string | null
+  status: DeadlineStatus
+  completionNote?: string | null
+  closedAt?: string | null
+  notes?: string | null
+  createdAt: string
+}
+
+export interface GuardSummary {
+  overdue: number
+  dueToday: number
+  dueThisWeek: number
+  unverified: number
+  upcomingHearings: number
+  missingReports: number
+}
+
+export interface OfficialHoliday {
+  id: string
+  date: string
+  name: string
 }

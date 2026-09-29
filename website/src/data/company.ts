@@ -13,7 +13,11 @@ export const company = {
   entityTypeAr: 'شركة ذات مسؤولية محدودة (مهنية)',
   entityTypeEn: 'Limited liability company (Professional)',
   commercialRegistration: '7055255900',
-  vatNumber: '3150535051',
+  /**
+   * ضريبة القيمة المضافة: الشركة غير مسجّلة حالياً (منشأة جديدة دون حد التسجيل الإلزامي)، فلا يُعرض أي رقم
+   * ضريبي في الموقع ولا تُحتسب ضريبة على الفواتير. عند التسجيل يُضاف رقم التسجيل (15 رقماً) هنا ويُعاد عرضه.
+   */
+  vatRegistered: false,
   lawPracticeLicense: '481757',
   address: {
     ar: 'مركز الملك عبدالله المالي (كافد)، الرياض 13519، المملكة العربية السعودية',

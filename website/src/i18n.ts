@@ -182,7 +182,6 @@ export const t = {
     footer: {
       legal: 'البيانات النظامية',
       cr: 'السجل التجاري',
-      vat: 'الرقم الضريبي',
       license: 'ترخيص المحاماة',
       registeredName: 'الاسم في السجل التجاري',
       entityType: 'نوع الكيان',
@@ -365,7 +364,6 @@ export const t = {
     footer: {
       legal: 'Regulatory information',
       cr: 'Commercial Registration',
-      vat: 'VAT Number',
       license: 'Law Practice Licence',
       registeredName: 'Registered name',
       entityType: 'Entity type',

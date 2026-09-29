@@ -37,6 +37,8 @@ builder.Services.AddScoped<AuditLogger>();
 builder.Services.AddScoped<ConflictChecker>();
 builder.Services.AddSingleton<Notifier>();
 builder.Services.AddHostedService<IntakeRetentionService>();
+builder.Services.AddSingleton<DeadlineGuardService>();
+builder.Services.AddHostedService(sp => sp.GetRequiredService<DeadlineGuardService>());
 
 var jwtKey = builder.Configuration["Jwt:Key"];
 if (string.IsNullOrWhiteSpace(jwtKey) || Convert.FromBase64String(jwtKey).Length < 32)
@@ -197,6 +199,8 @@ app.MapTimeEntryEndpoints();
 app.MapInvoiceEndpoints();
 app.MapOfficeSettingsEndpoints();
 app.MapIntakeRequestEndpoints();
+app.MapHearingEndpoints();
+app.MapDeadlineEndpoints();
 
 app.MapGet("/health", () => Results.Ok(new { status = "ok" })).AllowAnonymous();
 

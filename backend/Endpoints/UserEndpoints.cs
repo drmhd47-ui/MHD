@@ -17,9 +17,15 @@ public static class UserEndpoints
         group.MapPost("/{id:guid}/deactivate", Deactivate);
         group.MapPost("/{id:guid}/activate", Activate);
         group.MapPost("/{id:guid}/reset-password", ResetPassword);
+        group.MapPut("/{id:guid}/profile", UpdateProfile);
+
+        // قائمة الفريق لاختيار المسؤول والنائب والمترافع — متاحة لكل مستخدم مسجّل، بلا بريد ولا بيانات حساب.
+        app.MapGet("/api/team", Team).RequireAuthorization().WithTags("Users");
     }
 
-    private record CreateUserRequest(string FullName, string Email, UserRole Role, string TemporaryPassword);
+    private record CreateUserRequest(string FullName, string Email, UserRole Role, string TemporaryPassword,
+        string? Title = null, bool IsLicensedLawyer = false, string? LicenseNumber = null);
+    private record UpdateProfileRequest(string FullName, UserRole Role, string? Title, bool IsLicensedLawyer, string? LicenseNumber);
     private record ResetPasswordRequest(string TemporaryPassword);
 
     private static string ClientIp(HttpContext http) => http.Connection.RemoteIpAddress?.ToString() ?? "unknown";
@@ -29,7 +35,7 @@ public static class UserEndpoints
     {
         var users = await db.Users
             .OrderBy(u => u.FullName)
-            .Select(u => new { u.Id, u.FullName, u.Email, Role = u.Role.ToString(), u.IsActive, u.TotpEnabled, u.LastLoginAt, u.CreatedAt })
+            .Select(u => new { u.Id, u.FullName, u.Email, Role = u.Role.ToString(), u.Title, u.IsLicensedLawyer, u.LicenseNumber, u.IsActive, u.TotpEnabled, u.LastLoginAt, u.CreatedAt })
             .ToListAsync();
         return Results.Ok(users);
     }
@@ -46,12 +52,18 @@ public static class UserEndpoints
         if (!PasswordHasher.MeetsPolicy(req.TemporaryPassword ?? "", out var error))
             return Results.BadRequest(new { message = error });
 
+        if (req.IsLicensedLawyer && string.IsNullOrWhiteSpace(req.LicenseNumber))
+            return Results.BadRequest(new { message = "رقم رخصة المحاماة مطلوب للمحامي المرخّص" });
+
         var (hash, salt) = PasswordHasher.Hash(req.TemporaryPassword!);
         var user = new User
         {
             FullName = req.FullName.Trim(),
             Email = email,
             Role = req.Role,
+            Title = string.IsNullOrWhiteSpace(req.Title) ? null : req.Title.Trim(),
+            IsLicensedLawyer = req.IsLicensedLawyer,
+            LicenseNumber = req.IsLicensedLawyer ? req.LicenseNumber!.Trim() : null,
             PasswordHash = hash,
             PasswordSalt = salt,
             MustChangePassword = true
@@ -63,6 +75,46 @@ public static class UserEndpoints
         await audit.LogAsync(actorId, ActorName(http), "USER_CREATED", "User", user.Id.ToString(), ClientIp(http));
 
         return Results.Created($"/api/users/{user.Id}", new { user.Id, user.FullName, user.Email, Role = user.Role.ToString() });
+    }
+
+    private static async Task<IResult> Team(AppDbContext db)
+    {
+        var team = await db.Users.Where(u => u.IsActive)
+            .OrderBy(u => u.FullName)
+            .Select(u => new { u.Id, u.FullName, u.Title, u.IsLicensedLawyer, Role = u.Role.ToString() })
+            .ToListAsync();
+        return Results.Ok(team);
+    }
+
+    private static async Task<IResult> UpdateProfile(Guid id, UpdateProfileRequest req, AppDbContext db, AuditLogger audit, HttpContext http)
+    {
+        var user = await db.Users.FindAsync(id);
+        if (user is null) return Results.NotFound();
+        if (string.IsNullOrWhiteSpace(req.FullName))
+            return Results.BadRequest(new { message = "الاسم مطلوب" });
+        if (req.IsLicensedLawyer && string.IsNullOrWhiteSpace(req.LicenseNumber))
+            return Results.BadRequest(new { message = "رقم رخصة المحاماة مطلوب للمحامي المرخّص" });
+
+        var actorId = JwtTokenService.GetUserId(http.User);
+        // لا يُنزع دور المدير عن آخر مدير نشط، ولا يُنزعه المدير عن نفسه، حتى لا يُقفل النظام بلا مدير.
+        if (user.Role == UserRole.Manager && req.Role != UserRole.Manager)
+        {
+            if (actorId == user.Id)
+                return Results.BadRequest(new { message = "لا يمكنك إزالة صلاحية المدير عن حسابك" });
+            if (!await db.Users.AnyAsync(u => u.Id != user.Id && u.IsActive && u.Role == UserRole.Manager))
+                return Results.BadRequest(new { message = "يجب أن يبقى في النظام مدير نشط واحد على الأقل" });
+        }
+
+        user.FullName = req.FullName.Trim();
+        user.Role = req.Role;
+        user.Title = string.IsNullOrWhiteSpace(req.Title) ? null : req.Title.Trim();
+        user.IsLicensedLawyer = req.IsLicensedLawyer;
+        user.LicenseNumber = req.IsLicensedLawyer ? req.LicenseNumber!.Trim() : null;
+        await db.SaveChangesAsync();
+
+        await audit.LogAsync(actorId, ActorName(http), "USER_PROFILE_UPDATED", "User", id.ToString(), ClientIp(http),
+            $"الدور: {user.Role}، الصفة: {user.Title ?? "—"}، محامٍ مرخّص: {(user.IsLicensedLawyer ? "نعم" : "لا")}");
+        return Results.Ok(new { user.Id, user.FullName, Role = user.Role.ToString(), user.Title, user.IsLicensedLawyer, user.LicenseNumber });
     }
 
     private static Task<IResult> Deactivate(Guid id, AppDbContext db, AuditLogger audit, HttpContext http)

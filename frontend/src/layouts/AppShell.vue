@@ -19,10 +19,24 @@ async function refreshIntake() {
     // العدّاد إضافي؛ لا يعطّل الواجهة إن تعذّر
   }
 }
+// شارة حارس المهل: المتأخرة والمنتهية اليوم وتقارير الجلسات الناقصة لمهل المستخدم وجلساته.
+const guardAlerts = ref(0)
+async function refreshGuard() {
+  try {
+    const { data } = await api.get<{ overdue: number; dueToday: number; missingReports: number }>('/deadlines/summary', { params: { mine: true } })
+    guardAlerts.value = data.overdue + data.dueToday + data.missingReports
+  } catch {
+    // الشارة إضافية
+  }
+}
 let timer: ReturnType<typeof setInterval>
 onMounted(() => {
   refreshIntake()
-  timer = setInterval(refreshIntake, 60000)
+  refreshGuard()
+  timer = setInterval(() => {
+    refreshIntake()
+    refreshGuard()
+  }, 60000)
 })
 onUnmounted(() => clearInterval(timer))
 
@@ -32,6 +46,8 @@ const navItems = computed(() => {
     { to: '/intake-requests', label: 'طلبات الموقع', badge: newIntake.value },
     { to: '/clients', label: 'العملاء' },
     { to: '/cases', label: 'القضايا والملفات' },
+    { to: '/deadlines', label: 'حارس المهل', badge: guardAlerts.value },
+    { to: '/hearings', label: 'الجلسات وتقاريرها' },
     { to: '/appointments', label: 'الجدولة والمواعيد' },
     { to: '/legal-archive', label: 'الأرشيف القانوني' }
   ]
@@ -99,7 +115,7 @@ async function handleLogout() {
             <span
               v-if="item.badge"
               class="rounded-full bg-gold px-2 text-xs font-bold text-brand-700"
-              :aria-label="`طلبات جديدة: ${item.badge}`"
+              :aria-label="`تنبيهات: ${item.badge}`"
               >{{ item.badge }}</span
             >
           </span>
@@ -108,7 +124,7 @@ async function handleLogout() {
 
       <div class="border-t border-gray-100 p-3">
         <p class="px-3 text-sm text-gray-700">{{ auth.user?.fullName }}</p>
-        <p class="mb-2 px-3 text-xs text-gray-400">{{ auth.user?.role === 'Manager' ? 'مدير المكتب' : 'محامٍ' }}</p>
+        <p class="mb-2 px-3 text-xs text-gray-400">{{ auth.user?.title || (auth.user?.role === 'Manager' ? 'الشريك الإداري' : 'عضو الفريق') }}</p>
         <button
           class="w-full rounded-lg px-3 py-2 text-right text-sm font-medium text-red-600 hover:bg-red-50"
           @click="handleLogout"

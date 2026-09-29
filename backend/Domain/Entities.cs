@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace MHD.Api.Domain;
 
 public enum UserRole
@@ -26,21 +28,33 @@ public class User
     public string Email { get; set; } = default!;
     public UserRole Role { get; set; }
 
-    public string PasswordHash { get; set; } = default!;
-    public string PasswordSalt { get; set; } = default!;
-    public bool MustChangePassword { get; set; } = true;
+    /// <summary>الصفة المهنية كما تظهر داخل النظام (مثل: الشريك الإداري، الشريك الاستشاري القانوني، محامية).</summary>
+    public string? Title { get; set; }
 
-    public string? TotpSecretEncrypted { get; set; }
-    public bool TotpEnabled { get; set; }
+    /// <summary>
+    /// محامٍ مرخّص من وزارة العدل. الترافع أمام المحاكم وديوان المظالم واللجان مقصور على المحامي المرخّص
+    /// (نظام المحاماة)، فلا يُسند الترافع في جلسة إلا لمن يحمل هذه الصفة.
+    /// </summary>
+    public bool IsLicensedLawyer { get; set; }
+    public string? LicenseNumber { get; set; }
+
+    // بيانات الاعتماد وحالة الحساب لا تخرج في أي استجابة API، حتى حين يُضمَّن المستخدم داخل كيان آخر
+    // (المحامي المسند في القضية، أو المسند إليه في الموعد).
+    [JsonIgnore] public string PasswordHash { get; set; } = default!;
+    [JsonIgnore] public string PasswordSalt { get; set; } = default!;
+    [JsonIgnore] public bool MustChangePassword { get; set; } = true;
+
+    [JsonIgnore] public string? TotpSecretEncrypted { get; set; }
+    [JsonIgnore] public bool TotpEnabled { get; set; }
 
     public bool IsActive { get; set; } = true;
-    public int FailedLoginAttempts { get; set; }
-    public DateTimeOffset? LockedUntil { get; set; }
+    [JsonIgnore] public int FailedLoginAttempts { get; set; }
+    [JsonIgnore] public DateTimeOffset? LockedUntil { get; set; }
 
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
-    public DateTimeOffset? LastLoginAt { get; set; }
+    [JsonIgnore] public DateTimeOffset? LastLoginAt { get; set; }
 
-    public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
+    [JsonIgnore] public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 }
 
 public class RefreshToken
@@ -248,6 +262,9 @@ public class Invoice
     public decimal VatAmount { get; set; }
     public decimal Total { get; set; }
 
+    /// <summary>فاتورة ضريبية (البائع مسجَّل في ضريبة القيمة المضافة وقت الإصدار) أم فاتورة عادية.</summary>
+    public bool IsTaxInvoice { get; set; }
+
     /// <summary>اسم البائع والرقم الضريبي وقت الإصدار — يُنسَخان من إعدادات المكتب لتثبيت الفاتورة تاريخياً.</summary>
     public string? SellerName { get; set; }
     public string? SellerVatNumber { get; set; }
@@ -288,6 +305,12 @@ public class OfficeSettings
     public string? Phone { get; set; }
     public string? Email { get; set; }
     public decimal DefaultVatRate { get; set; } = 0.15m;
+
+    /// <summary>
+    /// التسجيل في ضريبة القيمة المضافة. ما دام غير مسجَّل: لا تُحتسب ضريبة على الفواتير، ولا يُطبع رقم ضريبي،
+    /// ولا يُبنى رمز الفاتورة الضريبية. يلزم التسجيل متى تجاوزت الإيرادات حد التسجيل الإلزامي.
+    /// </summary>
+    public bool IsVatRegistered { get; set; }
 
     /// <summary>المحامي المناوب الذي يُشعَر بطلبات الموقع الواردة. إن لم يُحدَّد يُشعَر المديرون.</summary>
     public Guid? OnDutyUserId { get; set; }
@@ -344,4 +367,134 @@ public class IntakeRequest
     public Guid? ClosedByUserId { get; set; }
     public DateTimeOffset? ClosedAt { get; set; }
     public DateTimeOffset? AnonymizedAt { get; set; }
+}
+
+public enum HearingStatus
+{
+    Scheduled = 1,
+    Held = 2,
+    Postponed = 3,
+    Cancelled = 4
+}
+
+/// <summary>
+/// جلسة قضائية مرتبطة بملف. المترافع فيها محامٍ مرخّص، ويجوز أن يرافقه عضو مساند من الفريق.
+/// بعد انعقادها يُكتب تقرير الجلسة، ويُنشأ موعد الجلسة التالية إن حُدّد.
+/// </summary>
+public class Hearing
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
+
+    public Guid CaseId { get; set; }
+    public Case Case { get; set; } = default!;
+
+    public DateTimeOffset ScheduledAt { get; set; }
+    public string? Court { get; set; }
+    /// <summary>الدائرة القضائية.</summary>
+    public string? Circuit { get; set; }
+    /// <summary>حضوري أو مرئي، أو قاعة محددة.</summary>
+    public string? Location { get; set; }
+    public string? Purpose { get; set; }
+
+    public Guid LawyerId { get; set; }
+    public User Lawyer { get; set; } = default!;
+    public Guid? SupportUserId { get; set; }
+    public User? SupportUser { get; set; }
+
+    public HearingStatus Status { get; set; } = HearingStatus.Scheduled;
+    /// <summary>تقرير الجلسة: ما دار فيها وما قررته الدائرة. داخلي، ويُبلَّغ العميل بملخصه بقرار المحامي.</summary>
+    public string? Report { get; set; }
+    public DateTimeOffset? ReportedAt { get; set; }
+    public Guid? ReportedByUserId { get; set; }
+    public Guid? NextHearingId { get; set; }
+
+    public DateTimeOffset? ReminderSentAt { get; set; }
+    public DateTimeOffset? ReportReminderSentAt { get; set; }
+
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+    public Guid CreatedByUserId { get; set; }
+}
+
+/// <summary>
+/// قاعدة مهلة (نظامية أو داخلية): عدد الأيام وواقعة بدء السريان والسند النظامي. تُحفظ في القاعدة ليعدّلها
+/// الشريك الإداري، ولا تُعد القاعدة النظامية "متحقَّقاً منها" إلا بعد أن يطابق محامٍ نصها مع المصدر الرسمي.
+/// </summary>
+public class DeadlineRule
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public string Key { get; set; } = default!;
+    public string Name { get; set; } = default!;
+    public int Days { get; set; }
+    /// <summary>واقعة بدء السريان، مثل: من تاريخ تسلّم صورة الحكم.</summary>
+    public string Trigger { get; set; } = default!;
+    /// <summary>السند النظامي (اسم النظام ورقم المادة إن تحقق منه محامٍ)؛ فارغ للمهل الداخلية.</summary>
+    public string? LegalBasis { get; set; }
+    /// <summary>مهلة داخلية للعمل (لا يترتب على فواتها سقوط حق نظامي).</summary>
+    public bool IsInternal { get; set; }
+
+    public bool BasisVerified { get; set; }
+    public Guid? BasisVerifiedByUserId { get; set; }
+    public DateTimeOffset? BasisVerifiedAt { get; set; }
+
+    public bool IsActive { get; set; } = true;
+    public int SortOrder { get; set; }
+}
+
+public enum DeadlineStatus
+{
+    Open = 1,
+    Completed = 2,
+    Waived = 3
+}
+
+/// <summary>
+/// مهلة على ملف تحت "حارس المهل": مسؤول ونائب مختلفان، وتحقق مزدوج (يؤكد التاريخ مستخدم غير الذي أنشأه)،
+/// وتنبيهات متدرجة قبل الانتهاء. السند وعدد الأيام يُنسخان من القاعدة وقت الإنشاء ليبقى السجل ثابتاً.
+/// </summary>
+public class LegalDeadline
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
+
+    public Guid CaseId { get; set; }
+    public Case Case { get; set; } = default!;
+
+    public Guid? RuleId { get; set; }
+    public string Title { get; set; } = default!;
+    public string? LegalBasis { get; set; }
+    public bool IsInternal { get; set; }
+    public bool BasisVerified { get; set; }
+
+    public DateOnly TriggerDate { get; set; }
+    public int Days { get; set; }
+    public DateOnly DueDate { get; set; }
+    /// <summary>سبب نقل تاريخ الانتهاء إن صادف عطلة (للشفافية أمام من يتحقق).</summary>
+    public string? DueDateNote { get; set; }
+
+    public Guid ResponsibleUserId { get; set; }
+    public User ResponsibleUser { get; set; } = default!;
+    public Guid BackupUserId { get; set; }
+    public User BackupUser { get; set; } = default!;
+
+    public Guid CreatedByUserId { get; set; }
+    public Guid? VerifiedByUserId { get; set; }
+    public DateTimeOffset? VerifiedAt { get; set; }
+
+    public DeadlineStatus Status { get; set; } = DeadlineStatus.Open;
+    public string? CompletionNote { get; set; }
+    public Guid? ClosedByUserId { get; set; }
+    public DateTimeOffset? ClosedAt { get; set; }
+
+    /// <summary>آخر مرحلة تنبيه أُرسلت (عدد الأيام المتبقية: 7، 3، 1، 0، -1 للمتأخرة). null = لم يُرسل شيء.</summary>
+    public int? LastReminderStage { get; set; }
+
+    public string? Notes { get; set; }
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+}
+
+/// <summary>عطلة رسمية تُمدّد المهل التي ينتهي آخر يوم فيها إلى أول يوم عمل بعدها.</summary>
+public class OfficialHoliday
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public DateOnly Date { get; set; }
+    public string Name { get; set; } = default!;
 }

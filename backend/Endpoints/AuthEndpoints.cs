@@ -36,6 +36,8 @@ public static class AuthEndpoints
         u.FullName,
         u.Email,
         Role = u.Role.ToString(),
+        u.Title,
+        u.IsLicensedLawyer,
         u.TotpEnabled
     };
 

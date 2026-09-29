@@ -59,11 +59,11 @@ reqTitle:'Request a service', reqSub:'Choose a service and our team will reach o
 demoView:'View', demoStaff:'Team', demoClient:'Client', caption:'Interactive iOS prototype · same design available for Android'
 }},
 team:[
-{id:'sara', initials:{ar:'س',en:'S'}, name:{ar:'سارة العتيبي',en:'Sara Al-Otaibi'}, role:{ar:'محامية أولى',en:'Senior Associate'}, online:true},
-{id:'abdullah', initials:{ar:'ع',en:'A'}, name:{ar:'عبدالله الزهراني',en:'Abdullah Al-Zahrani'}, role:{ar:'محامٍ شريك',en:'Partner'}, online:true},
-{id:'noura', initials:{ar:'ن',en:'N'}, name:{ar:'نورة القحطاني',en:'Noura Al-Qahtani'}, role:{ar:'مستشارة حوكمة',en:'Governance Counsel'}, online:false},
-{id:'reem', initials:{ar:'ر',en:'R'}, name:{ar:'ريم الدوسري',en:'Reem Al-Dosari'}, role:{ar:'مترجمة قانونية',en:'Legal Translator'}, online:true},
-{id:'faisal', initials:{ar:'م',en:'M'}, name:{ar:'الدكتور محمد بن جمعان',en:'Dr. Mohammed bin Jumaan'}, role:{ar:'الشريك الإداري',en:'Managing Partner'}, online:true}
+{id:'sara', initials:{ar:'ض',en:'D'}, name:{ar:'ضي حمد آل شيبان',en:'Dhai Hamad Al Shaiban'}, role:{ar:'محامية',en:'Lawyer'}, online:true},
+{id:'abdullah', initials:{ar:'ع',en:'A'}, name:{ar:'عبدالله الزهراني (تجريبي)',en:'Abdullah Al-Zahrani (demo)'}, role:{ar:'محامٍ شريك',en:'Partner'}, online:true},
+{id:'noura', initials:{ar:'ن',en:'N'}, name:{ar:'نورة القحطاني (تجريبي)',en:'Noura Al-Qahtani (demo)'}, role:{ar:'مستشارة حوكمة',en:'Governance Counsel'}, online:false},
+{id:'reem', initials:{ar:'ر',en:'R'}, name:{ar:'ريم الدوسري (تجريبي)',en:'Reem Al-Dosari (demo)'}, role:{ar:'مترجمة قانونية',en:'Legal Translator'}, online:true},
+{id:'faisal', initials:{ar:'م',en:'M'}, name:{ar:'الدكتور محمد العنزي',en:'Dr. Mohammed Al-Anazi'}, role:{ar:'الشريك الإداري',en:'Managing Partner'}, online:true}
 ],
 clients:[
 {id:'noor', name:{ar:'شركة النور التجارية',en:'Al Noor Trading Co.'}, contact:{ar:'أحمد الشمري',en:'Ahmed Al-Shammari'}},
@@ -212,7 +212,7 @@ sources:[
     lookupTitle: 'البحث في مواد النظام', lookupBtn: 'عرض المادة', useInAssistant: 'استخدامه مرجعًا في المساعد',
     lawsWord: 'نظامًا', regsWord: 'لائحة وقرارًا', judWord: 'مرجعًا قضائيًا', libNote: 'المكتبة مرجع لكل عمل داخل التطبيق، وتُحدَّث من المصادر الرسمية. تحقق دائمًا من آخر تعديل قبل الاستشهاد.',
     switchClient: 'معاينة بوابة عملاء إم القانونية', switchStaff: 'دخول فريق إم القانونية',
-    demoStaff: 'سارة · محامية', demoAssoc: 'ماجد · مساعد', demoPartner: 'د. محمد · الشريك الإداري', demoClient: 'العميل'
+    demoStaff: 'ضي · محامية', demoAssoc: 'ماجد · مساعد', demoPartner: 'د. محمد · الشريك الإداري', demoClient: 'العميل'
   });
   Object.assign(D.T.en, {
     portalTeam: 'M Legal Team', portalPartners: 'M Legal Partners', portalClients: 'M Legal Clients',
@@ -261,10 +261,10 @@ sources:[
     lookupTitle: 'Look up an article', lookupBtn: 'Show article', useInAssistant: 'Use as reference in assistant',
     lawsWord: 'laws', regsWord: 'regulations & decisions', judWord: 'judicial references', libNote: 'The library is the reference for all work in the app and is updated from official sources. Always check the latest amendment before citing.',
     switchClient: 'Preview M Legal Clients portal', switchStaff: 'M Legal Team sign in',
-    demoStaff: 'Sara · Lawyer', demoAssoc: 'Majed · Assoc.', demoPartner: 'Dr. Mohammed · Managing Partner', demoClient: 'Client'
+    demoStaff: 'Dhai · Lawyer', demoAssoc: 'Majed · Assoc.', demoPartner: 'Dr. Mohammed · Managing Partner', demoClient: 'Client'
   });
   D.classes = [
-    { key: 'p_admin', name: { ar: 'شريك إداري', en: 'Managing Partner' } }, { key: 'p_consult', name: { ar: 'شريك استشاري', en: 'Consulting Partner' } },
+    { key: 'p_admin', name: { ar: 'شريك إداري', en: 'Managing Partner' } }, { key: 'p_consult', name: { ar: 'الشريك الاستشاري القانوني', en: 'Legal Consulting Partner' } },
     { key: 'p_prof', name: { ar: 'شريك مهني', en: 'Professional Partner' } }, { key: 'lawyer', name: { ar: 'محامٍ', en: 'Lawyer' } },
     { key: 'consultant', name: { ar: 'مستشار', en: 'Consultant' } }, { key: 'admin', name: { ar: 'إداري', en: 'Administrative' } },
     { key: 'assoc', name: { ar: 'محامٍ مساعد', en: 'Associate Lawyer' } }, { key: 'lawyer_pt', name: { ar: 'محامٍ غير متفرغ', en: 'Part-time Lawyer' } },
@@ -274,13 +274,13 @@ sources:[
   D.defaultPerms = cls => { const p = {}; D.permKeys.forEach(k => p[k] = k === 'view'); if (cls === 'p_admin') D.permKeys.forEach(k => p[k] = true); else if (cls === 'p_prof' || cls === 'p_consult') D.permKeys.forEach(k => p[k] = k !== 'users'); return p; };
   const U = (id, cls, ar, en, email, mobile, nid, license, online) => ({ id, username: id, pass: 'Mg@2026', cls, name: { ar, en }, initials: { ar: ar.replace(/^د\.\s*/, '')[0], en: en.replace(/^Dr\.\s*/, '')[0] }, email, mobile, nid, license, online, locked: null });
   D.team = [
-    U('faisal', 'p_admin', 'الدكتور محمد بن جمعان', 'Dr. Mohammed bin Jumaan', 'faisal@mgrp.sa', '+966 55 210 4401', '1010000001', '', true),
-    U('hind', 'p_consult', 'د. هند السبيعي', 'Dr. Hind Al-Subaie', 'hind@mgrp.sa', '+966 55 210 4402', '1010000002', '', true),
-    U('abdullah', 'p_prof', 'عبدالله الزهراني', 'Abdullah Al-Zahrani', 'abdullah@mgrp.sa', '+966 55 210 4403', '1010000003', 'L-38112', true),
-    U('sara', 'lawyer', 'سارة العتيبي', 'Sara Al-Otaibi', 'sara@mgrp.sa', '+966 55 210 4404', '1010000004', 'L-41207', true),
-    U('noura', 'consultant', 'نورة القحطاني', 'Noura Al-Qahtani', 'noura@mgrp.sa', '+966 55 210 4405', '1010000005', '', false),
-    U('majed', 'assoc', 'ماجد العمري', 'Majed Al-Omari', 'majed@mgrp.sa', '+966 55 210 4406', '1010000006', 'L-45520', true),
-    U('reem', 'collab', 'ريم الدوسري', 'Reem Al-Dosari', 'reem@mgrp.sa', '+966 55 210 4407', '1010000007', '', true)
+    U('faisal', 'p_admin', 'الدكتور محمد العنزي', 'Dr. Mohammed Al-Anazi', 'faisal@mgrp.sa', '+966 55 210 4401', '1010000001', '', true),
+    U('hind', 'p_consult', 'المستشار محمد سعد', 'Counsel Mohammed Saad', 'hind@mgrp.sa', '+966 55 210 4402', '1010000002', '', true),
+    U('abdullah', 'p_prof', 'عبدالله الزهراني (تجريبي)', 'Abdullah Al-Zahrani (demo)', 'abdullah@mgrp.sa', '+966 55 210 4403', '1010000003', 'L-38112', true),
+    U('sara', 'lawyer', 'ضي حمد آل شيبان', 'Dhai Hamad Al Shaiban', 'sara@mgrp.sa', '+966 55 210 4404', '1010000004', '', true),
+    U('noura', 'consultant', 'نورة القحطاني (تجريبي)', 'Noura Al-Qahtani (demo)', 'noura@mgrp.sa', '+966 55 210 4405', '1010000005', '', false),
+    U('majed', 'assoc', 'ماجد العمري (تجريبي)', 'Majed Al-Omari (demo)', 'majed@mgrp.sa', '+966 55 210 4406', '1010000006', 'L-45520', true),
+    U('reem', 'collab', 'ريم الدوسري (تجريبي)', 'Reem Al-Dosari (demo)', 'reem@mgrp.sa', '+966 55 210 4407', '1010000007', '', true)
   ];
   D.team.forEach(u => { u.role = D.classes.find(c => c.key === u.cls).name; u.perms = D.defaultPerms(u.cls); });
   const sara = D.team.find(u => u.id === 'sara'); sara.perms.draft = true; sara.perms.clients = true;

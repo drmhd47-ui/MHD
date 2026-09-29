@@ -18,7 +18,11 @@ public static class OfficeSettingsEndpoints
 
     private record OfficeSettingsRequest(
         string FirmName, string? VatNumber, string? CommercialRegistrationNumber,
-        string? Address, string? Phone, string? Email, decimal DefaultVatRate, Guid? OnDutyUserId);
+        string? Address, string? Phone, string? Email, decimal DefaultVatRate, Guid? OnDutyUserId, bool IsVatRegistered = false);
+
+    /// <summary>رقم تسجيل ضريبة القيمة المضافة: 15 رقماً، يبدأ وينتهي بالرقم 3.</summary>
+    public static bool IsValidVatNumber(string? v) =>
+        v is { Length: 15 } && v.All(char.IsAsciiDigit) && v[0] == '3' && v[^1] == '3';
 
     private static string ClientIp(HttpContext http) => http.Connection.RemoteIpAddress?.ToString() ?? "unknown";
     private static string ActorName(HttpContext http) => http.User.Identity?.Name ?? "";
@@ -43,9 +47,17 @@ public static class OfficeSettingsEndpoints
         if (string.IsNullOrWhiteSpace(req.FirmName))
             return Results.BadRequest(new { message = "اسم المكتب مطلوب" });
 
+        var vatNumber = string.IsNullOrWhiteSpace(req.VatNumber) ? null : req.VatNumber.Trim();
+        if (req.IsVatRegistered && !IsValidVatNumber(vatNumber))
+            return Results.BadRequest(new { message = "رقم التسجيل في ضريبة القيمة المضافة 15 رقماً يبدأ وينتهي بالرقم 3" });
+        if (req.IsVatRegistered && req.DefaultVatRate is <= 0 or >= 1)
+            return Results.BadRequest(new { message = "نسبة الضريبة غير صحيحة" });
+
         var settings = await GetOrCreate(db);
         settings.FirmName = req.FirmName.Trim();
-        settings.VatNumber = req.VatNumber;
+        settings.IsVatRegistered = req.IsVatRegistered;
+        // غير المسجَّل لا يُحفظ له رقم ضريبي حتى لا يظهر في أي مستند.
+        settings.VatNumber = req.IsVatRegistered ? vatNumber : null;
         settings.CommercialRegistrationNumber = req.CommercialRegistrationNumber;
         settings.Address = req.Address;
         settings.Phone = req.Phone;

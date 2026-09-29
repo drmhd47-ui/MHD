@@ -1,10 +1,10 @@
 window.MG_CONSOLE = {
   ver: 3, today: '2026-09-29',
-  firm: { name: 'مجموعة إم القانونية', en: 'M GRP Company For Lawyership and Legal Consultations', vat: '3150535051', cr: '7055255900', license: '481757', address: 'مركز الملك عبدالله المالي (كافد) — الرياض 13519', phone: '+966 54 644 4000', email: 'info@mgrp.sa' },
+  firm: { name: 'مجموعة إم القانونية', en: 'M GRP Company For Lawyership and Legal Consultations', vat: '', vatRegistered: false, cr: '7055255900', license: '481757', address: 'مركز الملك عبدالله المالي (كافد) — الرياض 13519', phone: '+966 54 644 4000', email: 'info@mgrp.sa' },
   branches: [
     { id: 'ruh', name: 'الرياض', note: 'المقر الرئيسي — كافد' }, { id: 'oth', name: 'مدن أخرى', note: 'بالتنسيق المسبق' }
   ],
-  extraUsers: [{ id: 'lama', username: 'lama', pass: 'Mg@2026', cls: 'admin', name: { ar: 'لمى الشهري', en: 'Lama Al-Shehri' }, initials: { ar: 'ل', en: 'L' }, email: 'lama@mgrp.sa', mobile: '+966 55 210 4408', nid: '1010000008', license: '', online: true, locked: null, role: { ar: 'إداري', en: 'Administrative' } }],
+  extraUsers: [{ id: 'lama', username: 'lama', pass: 'Mg@2026', cls: 'admin', name: { ar: 'لمى الشهري (تجريبي)', en: 'Lama Al-Shehri (demo)' }, initials: { ar: 'ل', en: 'L' }, email: 'lama@mgrp.sa', mobile: '+966 55 210 4408', nid: '1010000008', license: '', online: true, locked: null, role: { ar: 'إداري', en: 'Administrative' } }],
   staff: { faisal: { branch: 'ruh', rate: 1500, cost: 950 }, hind: { branch: 'ruh', rate: 1400, cost: 900 }, abdullah: { branch: 'ruh', rate: 1200, cost: 750 }, sara: { branch: 'ruh', rate: 800, cost: 420 }, noura: { branch: 'oth', rate: 750, cost: 400 }, majed: { branch: 'oth', rate: 450, cost: 230 }, reem: { branch: 'ruh', rate: 350, cost: 200 }, lama: { branch: 'ruh', rate: 0, cost: 180 } },
   clients: [
     { id: 'noor', name: 'شركة النور التجارية', type: 'شركة', cr: '1010456789', vat: '310456789000003', contact: 'أحمد الشمري', phone: '+966 50 111 2201', email: 'ahmed@alnoor.sa', branch: 'ruh', kyc: [1, 1, 1, 1, 1], wathq: 'active', since: '2025-03-10' },
@@ -176,7 +176,7 @@ window.MG_CONSOLE = {
   ],
   integrations: [
     { key: 'najiz', name: 'ناجز', desc: 'مزامنة الجلسات والأحكام والوكالات عبر الربط الرسمي المعتمد من وزارة العدل عند إتاحته، وإلا إدخال يدوي بمسؤولية المحامي — لا استخلاص آلي للبيانات من المنصة', on: true },
-    { key: 'zatca', name: 'زاتكا — فاتورة', desc: 'إصدار واعتماد الفواتير الإلكترونية للمرحلة الثانية', on: true },
+    { key: 'zatca', name: 'زاتكا — فاتورة', desc: 'الفوترة الإلكترونية — تُفعَّل بعد التسجيل في ضريبة القيمة المضافة', on: false },
     { key: 'nafith', name: 'نافذ', desc: 'إنشاء العقد الموحد لأتعاب المحاماة بصفة سند تنفيذي', on: true },
     { key: 'wathq', name: 'واثق', desc: 'التحقق من السجلات التجارية قبل التعاقد', on: true },
     { key: 'whatsapp', name: 'واتساب للأعمال', desc: 'إشعارات العملاء وتقارير الجلسات وروابط الدفع', on: true },

@@ -18,6 +18,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<InvoiceLine> InvoiceLines => Set<InvoiceLine>();
     public DbSet<OfficeSettings> OfficeSettings => Set<OfficeSettings>();
     public DbSet<IntakeRequest> IntakeRequests => Set<IntakeRequest>();
+    public DbSet<Hearing> Hearings => Set<Hearing>();
+    public DbSet<DeadlineRule> DeadlineRules => Set<DeadlineRule>();
+    public DbSet<LegalDeadline> LegalDeadlines => Set<LegalDeadline>();
+    public DbSet<OfficialHoliday> OfficialHolidays => Set<OfficialHoliday>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -26,6 +30,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.HasIndex(u => u.Email).IsUnique();
             e.Property(u => u.Email).HasMaxLength(256).IsRequired();
             e.Property(u => u.FullName).HasMaxLength(200).IsRequired();
+            e.Property(u => u.Title).HasMaxLength(150);
+            e.Property(u => u.LicenseNumber).HasMaxLength(50);
         });
 
         modelBuilder.Entity<RefreshToken>(e =>
@@ -170,6 +176,46 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.Property(o => o.DefaultVatRate).HasColumnType("decimal(5,4)");
         });
 
+        modelBuilder.Entity<Hearing>(e =>
+        {
+            e.Property(h => h.Court).HasMaxLength(300);
+            e.Property(h => h.Circuit).HasMaxLength(200);
+            e.Property(h => h.Location).HasMaxLength(300);
+            e.Property(h => h.Purpose).HasMaxLength(500);
+            e.HasIndex(h => h.ScheduledAt);
+            e.HasIndex(h => h.CaseId);
+            e.HasOne(h => h.Case).WithMany().HasForeignKey(h => h.CaseId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(h => h.Lawyer).WithMany().HasForeignKey(h => h.LawyerId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(h => h.SupportUser).WithMany().HasForeignKey(h => h.SupportUserId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<DeadlineRule>(e =>
+        {
+            e.HasIndex(r => r.Key).IsUnique();
+            e.Property(r => r.Key).HasMaxLength(60).IsRequired();
+            e.Property(r => r.Name).HasMaxLength(200).IsRequired();
+            e.Property(r => r.Trigger).HasMaxLength(300).IsRequired();
+            e.Property(r => r.LegalBasis).HasMaxLength(300);
+        });
+
+        modelBuilder.Entity<LegalDeadline>(e =>
+        {
+            e.Property(d => d.Title).HasMaxLength(200).IsRequired();
+            e.Property(d => d.LegalBasis).HasMaxLength(300);
+            e.Property(d => d.DueDateNote).HasMaxLength(300);
+            e.HasIndex(d => new { d.Status, d.DueDate });
+            e.HasIndex(d => d.CaseId);
+            e.HasOne(d => d.Case).WithMany().HasForeignKey(d => d.CaseId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(d => d.ResponsibleUser).WithMany().HasForeignKey(d => d.ResponsibleUserId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(d => d.BackupUser).WithMany().HasForeignKey(d => d.BackupUserId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<OfficialHoliday>(e =>
+        {
+            e.HasIndex(h => h.Date).IsUnique();
+            e.Property(h => h.Name).HasMaxLength(200).IsRequired();
+        });
+
         modelBuilder.Entity<IntakeRequest>(e =>
         {
             e.Property(r => r.Id).ValueGeneratedNever();
@@ -224,7 +270,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         nameof(Invoice.InvoiceNumber), nameof(Invoice.Subtotal), nameof(Invoice.VatRate),
         nameof(Invoice.VatAmount), nameof(Invoice.Total), nameof(Invoice.SellerName),
         nameof(Invoice.SellerVatNumber), nameof(Invoice.QrCodeTlvBase64), nameof(Invoice.ClientId),
-        nameof(Invoice.CaseId), nameof(Invoice.IssueDate)
+        nameof(Invoice.CaseId), nameof(Invoice.IssueDate), nameof(Invoice.IsTaxInvoice)
     ];
 
     /// <summary>لا حذف فعلي للفواتير أبداً، ولا تعديل لبياناتها المالية أو بنودها بعد تجاوزها حالة المسودة.</summary>
