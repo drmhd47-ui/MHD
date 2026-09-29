@@ -65,12 +65,9 @@ export const company = {
     }
   },
   licensedLawyers: [{ ar: { name: 'المحامية ضي حمد آل شيبان', role: 'محامية مرخّصة' }, en: { name: 'Dhai Hamad Al Shaiban', role: 'Licensed Lawyer' } }],
+  /** مقر واحد فقط (لا مكاتب فعلية في مدن أخرى)؛ الخدمة في أي مدينة بالتنسيق المسبق. */
   coverage: [
-    { ar: { city: 'الرياض', region: 'منطقة الرياض — المقر الرئيسي في كافد' }, en: { city: 'Riyadh', region: 'Riyadh Region — headquarters at KAFD' }, hq: true },
-    { ar: { city: 'الخبر', region: 'المنطقة الشرقية' }, en: { city: 'Al Khobar', region: 'Eastern Province' } },
-    { ar: { city: 'القصيم', region: 'منطقة القصيم' }, en: { city: 'Al-Qassim', region: 'Al-Qassim Region' } },
-    { ar: { city: 'المدينة المنورة', region: 'منطقة المدينة المنورة' }, en: { city: 'Madinah', region: 'Madinah Region' } },
-    { ar: { city: 'جدة', region: 'منطقة مكة المكرمة' }, en: { city: 'Jeddah', region: 'Makkah Region' } }
+    { ar: { city: 'الرياض', region: 'مركز الملك عبدالله المالي (كافد)' }, en: { city: 'Riyadh', region: 'King Abdullah Financial District (KAFD)' }, hq: true }
   ]
 } as const;
 

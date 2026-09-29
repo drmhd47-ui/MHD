@@ -9,7 +9,7 @@ interface Props {
 const { lang } = Astro.props;
 ---
 
-<ul class="coverage grid grid--3">
+<ul class="coverage grid grid--2">
   {
     company.coverage.map((c) => (
       <li class:list={['card', { hq: 'hq' in c && c.hq }]}>
@@ -19,6 +19,10 @@ const { lang } = Astro.props;
       </li>
     ))
   }
+  <li class="card">
+    <strong>{t[lang].coverage.anyCity}</strong>
+    <span>{t[lang].coverage.anyCityNote}</span>
+  </li>
 </ul>
 
 <style>

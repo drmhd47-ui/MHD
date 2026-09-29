@@ -114,9 +114,11 @@ export const t = {
     },
     coverage: {
       eyebrow: 'التغطية',
-      title: 'نخدم عملاءنا في مختلف مناطق المملكة',
-      lead: 'تُدار الأعمال مركزياً من المقر الرئيسي في مركز الملك عبدالله المالي، مع متابعة في المدن التالية عبر الشركاء والقانونيين المتعاونين.',
-      hq: 'المقر الرئيسي'
+      title: 'نخدم عملاءنا في جميع مدن المملكة',
+      lead: 'للشركة مقر واحد هو مقرها الرئيسي في مركز الملك عبدالله المالي بالرياض، ولا مكاتب فعلية لها في مدن أخرى. ونخدم عملاءنا في أي مدينة في المملكة بالتنسيق المسبق.',
+      hq: 'المقر الرئيسي',
+      anyCity: 'أي مدينة في المملكة',
+      anyCityNote: 'نلتقي بك أو نتابع عملك في مدينتك بموعد يُحدَّد بالتنسيق المسبق، أو عن بُعد.'
     },
     contact: {
       eyebrow: 'تواصل معنا',
@@ -295,9 +297,11 @@ export const t = {
     },
     coverage: {
       eyebrow: 'Coverage',
-      title: 'Serving clients across the Kingdom',
-      lead: 'Work is managed centrally from our headquarters at King Abdullah Financial District, with follow-up in the following cities through our partners and collaborating legal professionals.',
-      hq: 'Headquarters'
+      title: 'Serving clients in every city in the Kingdom',
+      lead: 'The firm has one office, its headquarters at King Abdullah Financial District in Riyadh, and no physical offices in other cities. We serve clients in any city in the Kingdom by prior arrangement.',
+      hq: 'Headquarters',
+      anyCity: 'Any city in the Kingdom',
+      anyCityNote: 'We meet you or follow up your matter in your city by appointment arranged in advance, or remotely.'
     },
     contact: {
       eyebrow: 'Contact',
