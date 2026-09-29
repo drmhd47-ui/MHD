@@ -13,7 +13,8 @@ services:
     build: ./backend
     environment:
       ASPNETCORE_ENVIRONMENT: Production
-      ConnectionStrings__Default: "Server=db,1433;Database=MhdLegal;User Id=sa;Password=${DB_SA_PASSWORD};TrustServerCertificate=True"
+      # حساب مخصص بصلاحيات على قاعدة MhdLegal وحدها — أنشئه مرة واحدة بـ deploy/internal/create-app-login.sql
+      ConnectionStrings__Default: "Server=db,1433;Database=MhdLegal;User Id=${DB_APP_USER};Password=${DB_APP_PASSWORD};TrustServerCertificate=True"
       Jwt__Key: ${JWT_KEY}
       Jwt__Issuer: ${JWT_ISSUER:-mhd-legal}
       Jwt__Audience: ${JWT_AUDIENCE:-mhd-legal-client}

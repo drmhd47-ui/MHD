@@ -78,7 +78,7 @@ function formatSize(bytes: number): string {
       امتدادات مسموحة: PDF، Word، Excel، PowerPoint، صور، نص. الحد الأقصى 50 ميجابايت.
     </p>
 
-    <table class="w-full text-right text-sm">
+    <table class="w-full min-w-[40rem] text-right text-sm">
       <thead class="border-b border-gray-100 text-gray-500">
         <tr>
           <th class="py-2 font-medium">الملف</th>

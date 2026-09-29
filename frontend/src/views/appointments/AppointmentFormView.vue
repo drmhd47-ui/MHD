@@ -89,7 +89,7 @@ async function save() {
         <label class="mb-1 block text-sm font-medium text-gray-700">العنوان</label>
         <input v-model="form.title" required class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
       </div>
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <label class="mb-1 block text-sm font-medium text-gray-700">النوع</label>
           <select v-model="form.type" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
@@ -107,7 +107,7 @@ async function save() {
           </select>
         </div>
       </div>
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <label class="mb-1 block text-sm font-medium text-gray-700">البداية</label>
           <input v-model="form.startAt" type="datetime-local" required class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
@@ -117,7 +117,7 @@ async function save() {
           <input v-model="form.endAt" type="datetime-local" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
         </div>
       </div>
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <label class="mb-1 block text-sm font-medium text-gray-700">الموقع</label>
           <input v-model="form.location" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />

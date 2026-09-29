@@ -25,7 +25,8 @@ const year = new Date().getFullYear();
     <div class="col">
       <h2 class="h">{f.legal}</h2>
       <dl class="facts">
-        <div><dt>{f.registeredName}</dt><dd lang="en" class="ltr">{company.registeredNameEn} ({company.registeredShortName})</dd></div>
+        <div><dt>{f.registeredName}</dt><dd lang="en" class="ltr">{company.registeredNameEn}</dd></div>
+        <div><dt>{f.entityType}</dt><dd>{lang === 'ar' ? company.entityTypeAr : company.entityTypeEn}</dd></div>
         <div><dt>{f.cr}</dt><dd class="num">{company.commercialRegistration}</dd></div>
         <div><dt>{f.license}</dt><dd class="num">{company.lawPracticeLicense}</dd></div>
         <div><dt>{f.vat}</dt><dd class="num">{company.vatNumber}</dd></div>

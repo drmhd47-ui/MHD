@@ -20,7 +20,8 @@ export const useAuthStore = defineStore('auth', {
   getters: {
     isAuthenticated: (state) => !!state.accessToken && !!state.user,
     isManager: (state) => state.user?.role === 'Manager',
-    needsTotpSetup: (state) => state.user?.role === 'Manager' && state.user?.totpEnabled === false
+    // المصادقة الثنائية إلزامية لكل المستخدمين (مدير ومحامين) لأن المحامين يطّلعون على ملفات العملاء كاملة.
+    needsTotpSetup: (state) => !!state.user && state.user.totpEnabled === false
   },
 
   actions: {

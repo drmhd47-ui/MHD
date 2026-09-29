@@ -10,6 +10,7 @@ const router = useRouter()
 
 // عدد طلبات الموقع الجديدة — يُحدَّث كل دقيقة ليرى المحامي المناوب الطلبات حتى دون بريد.
 const newIntake = ref(0)
+const menuOpen = ref(false)
 async function refreshIntake() {
   try {
     const { data } = await api.get<{ newCount: number }>('/intake-requests/summary')
@@ -50,9 +51,32 @@ async function handleLogout() {
 </script>
 
 <template>
-  <div class="flex min-h-screen bg-gray-50 text-gray-900" dir="rtl">
-    <aside class="flex w-64 shrink-0 flex-col border-l border-gray-200 bg-white">
-      <div class="flex items-center gap-3 border-b border-gray-100 px-5 py-5">
+  <div class="min-h-screen bg-gray-50 text-gray-900 md:flex" dir="rtl" @keydown.esc="menuOpen = false">
+    <!-- شريط علوي للجوال: المحامي يستخدم النظام من المحكمة أيضاً -->
+    <header class="sticky top-0 z-30 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 md:hidden">
+      <div class="flex items-center gap-2">
+        <span class="rounded-md border border-gold bg-cream p-0.5"><img :src="logo" alt="" class="h-9 w-auto" /></span>
+        <span class="text-sm font-bold text-brand-700">مجموعة إم القانونية</span>
+      </div>
+      <button
+        type="button"
+        class="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-brand-700"
+        :aria-expanded="menuOpen"
+        aria-controls="app-sidebar"
+        @click="menuOpen = !menuOpen"
+      >
+        {{ menuOpen ? 'إغلاق' : 'القائمة' }}
+        <span v-if="newIntake" class="mr-1 rounded-full bg-gold px-1.5 text-xs font-bold">{{ newIntake }}</span>
+      </button>
+    </header>
+
+    <aside
+      id="app-sidebar"
+      class="w-full shrink-0 flex-col border-l border-gray-200 bg-white md:flex md:w-64"
+      :class="menuOpen ? 'flex' : 'hidden'"
+      @click="(e) => (e.target as HTMLElement).closest('a') && (menuOpen = false)"
+    >
+      <div class="hidden items-center gap-3 border-b border-gray-100 px-5 py-5 md:flex">
         <span class="rounded-lg border border-gold bg-cream p-1">
           <img :src="logo" alt="" class="h-14 w-auto" />
         </span>
@@ -94,7 +118,7 @@ async function handleLogout() {
       </div>
     </aside>
 
-    <main class="flex-1 p-6">
+    <main class="min-w-0 flex-1 p-4 md:p-6">
       <router-view />
     </main>
   </div>

@@ -64,7 +64,7 @@ async function remove() {
         <label class="mb-1 block text-sm font-medium text-gray-700">العنوان</label>
         <input v-model="form.title" required class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
       </div>
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <label class="mb-1 block text-sm font-medium text-gray-700">النوع</label>
           <select v-model="form.type" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
@@ -80,7 +80,7 @@ async function remove() {
           <input v-model="form.referenceNumber" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
         </div>
       </div>
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <label class="mb-1 block text-sm font-medium text-gray-700">الجهة المُصدِرة</label>
           <input v-model="form.issuingAuthority" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />

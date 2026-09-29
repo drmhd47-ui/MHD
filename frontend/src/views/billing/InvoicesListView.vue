@@ -43,8 +43,8 @@ const statusLabel: Record<InvoiceStatus, string> = { Draft: 'مسودة', Issued
       <option value="Cancelled">ملغاة</option>
     </select>
 
-    <div class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
-      <table class="w-full text-right text-sm">
+    <div class="overflow-x-auto rounded-xl border border-gray-100 bg-white shadow-sm">
+      <table class="w-full min-w-[40rem] text-right text-sm">
         <thead class="bg-gray-50 text-gray-500">
           <tr>
             <th class="px-4 py-3 font-medium">رقم الفاتورة</th>

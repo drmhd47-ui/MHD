@@ -54,7 +54,7 @@ async function save() {
         <label class="mb-1 block text-sm font-medium text-gray-700">اسم المكتب</label>
         <input v-model="form.firmName" required class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
       </div>
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <label class="mb-1 block text-sm font-medium text-gray-700">الرقم الضريبي</label>
           <input v-model="form.vatNumber" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
@@ -68,7 +68,7 @@ async function save() {
         <label class="mb-1 block text-sm font-medium text-gray-700">العنوان</label>
         <input v-model="form.address" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
       </div>
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <label class="mb-1 block text-sm font-medium text-gray-700">الجوال</label>
           <input v-model="form.phone" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />

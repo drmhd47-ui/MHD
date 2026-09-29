@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
@@ -24,6 +24,15 @@ onMounted(() => {
   activityEvents.forEach((ev) => window.addEventListener(ev, resetIdleTimer))
   resetIdleTimer()
 })
+
+// يبدأ عدّاد الخمول فور تسجيل الدخول، لا مع أول حركة بعده.
+watch(
+  () => auth.isAuthenticated,
+  (loggedIn) => {
+    if (loggedIn) resetIdleTimer()
+    else clearTimeout(idleTimer)
+  }
+)
 
 onUnmounted(() => {
   activityEvents.forEach((ev) => window.removeEventListener(ev, resetIdleTimer))

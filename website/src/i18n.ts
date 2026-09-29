@@ -152,6 +152,7 @@ export const t = {
       vat: 'الرقم الضريبي',
       license: 'ترخيص المحاماة',
       registeredName: 'الاسم في السجل التجاري',
+      entityType: 'نوع الكيان',
       disclaimer:
         'المحتوى المنشور في هذا الموقع معلومات عامة عن الشركة وخدماتها، ولا يُعد استشارة قانونية، ولا يُنشئ الاطلاع عليه أو التواصل عبره علاقة توكيل بين المستخدم والشركة.',
       privacy: 'سياسة الخصوصية',
@@ -301,6 +302,7 @@ export const t = {
       vat: 'VAT Number',
       license: 'Law Practice Licence',
       registeredName: 'Registered name',
+      entityType: 'Entity type',
       disclaimer:
         'Content on this website is general information about the firm and its services. It is not legal advice, and viewing it or contacting us through it does not create a lawyer-client relationship.',
       privacy: 'Privacy policy',

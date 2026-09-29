@@ -5,11 +5,13 @@
 export const company = {
   nameAr: 'مجموعة إم القانونية',
   nameEn: 'M GROUP',
-  /** الاسم كما ورد في السجل التجاري. */
-  registeredNameEn: 'M GROUP COMPANY FOR LAWYERSHIP AND LEGAL CONSULATIONS',
-  registeredShortName: 'M GRP',
+  /** الاسم كما ورد حرفياً في شهادة السجل التجاري (وزارة التجارة، تاريخ الإصدار 21/09/2026). */
+  registeredNameEn: 'M GRP Company For Lawyership and Legal Consultations',
   legalFormAr: 'شركة محاماة مهنية مرخّصة',
   legalFormEn: 'Licensed professional law firm',
+  /** نوع الكيان وصفته كما في السجل التجاري. */
+  entityTypeAr: 'شركة ذات مسؤولية محدودة (مهنية)',
+  entityTypeEn: 'Limited liability company (Professional)',
   commercialRegistration: '7055255900',
   vatNumber: '3150535051',
   lawPracticeLicense: '481757',

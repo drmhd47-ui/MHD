@@ -1,6 +1,6 @@
 ## Data controller
 
-**M GROUP** (M GROUP COMPANY FOR LAWYERSHIP AND LEGAL CONSULATIONS), a licensed professional law firm, Commercial Registration 7055255900, Law Practice Licence 481757, located at King Abdullah Financial District (KAFD), Riyadh 13519. For anything relating to your data: info@mgrp.sa or +966 546 444 000.
+**M GROUP** (M GRP Company For Lawyership and Legal Consultations), a licensed professional law firm and limited liability company (professional), Commercial Registration 7055255900, Law Practice Licence 481757, located at King Abdullah Financial District (KAFD), Riyadh 13519. For anything relating to your data: info@mgrp.sa or +966 546 444 000.
 
 This policy is issued in compliance with the Personal Data Protection Law and its implementing regulations, and with the duty of professional confidentiality under the Law of Practice of Law.
 

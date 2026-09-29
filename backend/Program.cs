@@ -1,4 +1,6 @@
+using System.Net;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.HttpOverrides;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
@@ -127,9 +129,29 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(allowedOrigins).AllowAnyHeader().AllowAnyMethod().AllowCredentials());
 });
 
+// الخادم يعمل خلف nginx: بدون هذا يرى تحديدُ المعدل وسجلُ التدقيق عنوانَ nginx لكل المستخدمين، فتُقفل
+// محاولات دخول شخص واحد على المكتب كله ويفقد سجل التدقيق قيمته الإثباتية. يُقبل الرأس X-Forwarded-For
+// من الشبكات الخاصة فقط (شبكة Docker الداخلية افتراضياً)، ويمكن تضييقها عبر Proxy:KnownNetworks.
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.ForwardLimit = 1;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+    var networks = builder.Configuration.GetSection("Proxy:KnownNetworks").Get<string[]>()
+        ?? ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "127.0.0.0/8"];
+    foreach (var n in networks)
+    {
+        var parts = n.Split('/');
+        options.KnownNetworks.Add(new Microsoft.AspNetCore.HttpOverrides.IPNetwork(IPAddress.Parse(parts[0]), int.Parse(parts[1])));
+    }
+});
+
 builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
+
+app.UseForwardedHeaders();
 
 app.UseExceptionHandler(errApp =>
 {

@@ -78,7 +78,7 @@ async function save() {
           <option v-for="c in clients" :key="c.id" :value="c.id">{{ c.fullName }}</option>
         </select>
       </div>
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <label class="mb-1 block text-sm font-medium text-gray-700">الطرف المقابل</label>
           <input v-model="form.opposingPartyName" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
@@ -88,7 +88,7 @@ async function save() {
           <input v-model="form.caseType" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
         </div>
       </div>
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <label class="mb-1 block text-sm font-medium text-gray-700">المحكمة / الجهة</label>
           <input v-model="form.court" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />

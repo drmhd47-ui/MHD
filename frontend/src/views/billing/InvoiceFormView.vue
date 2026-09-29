@@ -160,7 +160,7 @@ async function cancelInvoice() {
 
     <form class="space-y-4 rounded-xl border border-gray-100 bg-white p-6 shadow-sm" @submit.prevent="save">
       <fieldset :disabled="!canEditFinancials" class="space-y-4 disabled:opacity-60">
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label class="mb-1 block text-sm font-medium text-gray-700">العميل</label>
             <select v-model="form.clientId" required class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
@@ -176,7 +176,7 @@ async function cancelInvoice() {
             </select>
           </div>
         </div>
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label class="mb-1 block text-sm font-medium text-gray-700">تاريخ الإصدار</label>
             <input v-model="form.issueDate" type="date" required class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />

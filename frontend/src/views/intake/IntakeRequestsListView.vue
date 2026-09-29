@@ -40,8 +40,8 @@ const fmt = new Intl.DateTimeFormat('ar-SA-u-ca-gregory-nu-latn', { dateStyle: '
       طلبات الاستشارة الواردة من الموقع العام. راجع فحص تعارض المصالح في صفحة الطلب قبل التحويل إلى عميل.
     </p>
 
-    <div class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
-      <table class="w-full text-right text-sm">
+    <div class="overflow-x-auto rounded-xl border border-gray-100 bg-white shadow-sm">
+      <table class="w-full min-w-[40rem] text-right text-sm">
         <thead class="bg-gray-50 text-gray-500">
           <tr>
             <th class="px-4 py-3 font-medium">رقم الطلب</th>

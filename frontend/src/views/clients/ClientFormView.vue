@@ -77,7 +77,7 @@ async function save() {
     </div>
 
     <form class="space-y-4 rounded-xl border border-gray-100 bg-white p-6 shadow-sm" @submit.prevent="save">
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <label class="mb-1 block text-sm font-medium text-gray-700">النوع</label>
           <select v-model="form.type" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
@@ -94,7 +94,7 @@ async function save() {
         <label class="mb-1 block text-sm font-medium text-gray-700">الاسم الكامل</label>
         <input v-model="form.fullName" required class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
       </div>
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <label class="mb-1 block text-sm font-medium text-gray-700">الجوال</label>
           <input v-model="form.phone" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
