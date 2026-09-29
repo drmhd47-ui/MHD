@@ -1,0 +1,20 @@
+---
+import Base from '../../../../layouts/Base.astro';
+import PageHead from '../../../../components/PageHead.astro';
+import { langPaths } from '../../../../lib/paths';
+import { path, t } from '../../../../i18n';
+import type { Lang } from '../../../../data/catalog';
+
+export const getStaticPaths = langPaths;
+const { lang } = Astro.props as { lang: Lang };
+const f = t[lang].form;
+---
+
+<Base lang={lang} title={f.errorPageTitle} description={f.errorPageBody} route="contact/error" noindex>
+  <PageHead lang={lang} title={f.errorPageTitle} lead={f.errorPageBody} />
+  <section class="section">
+    <div class="wrap">
+      <a class="btn btn--solid" href={path(lang, 'contact') + '#request'}>{f.back}</a>
+    </div>
+  </section>
+</Base>

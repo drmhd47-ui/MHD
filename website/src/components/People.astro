@@ -1,0 +1,62 @@
+---
+import { company } from '../data/company';
+import { t } from '../i18n';
+import type { Lang } from '../data/catalog';
+
+interface Props {
+  lang: Lang;
+  headingLevel?: 'h2' | 'h3';
+}
+const { lang } = Astro.props;
+const p = t[lang].people;
+const mp = company.managingPartner[lang];
+---
+
+<div class="people grid grid--3">
+  <article class="card person">
+    <p class="role">{p.managing}</p>
+    <h3>{mp.name}</h3>
+    <p>{mp.experience}</p>
+    <h4>{p.education}</h4>
+    <ul>{mp.education.map((e) => <li>{e}</li>)}</ul>
+  </article>
+  <article class="card person">
+    <p class="role">{p.lawyers}</p>
+    {
+      company.licensedLawyers.map((l) => (
+        <>
+          <h3>{l[lang].name}</h3>
+          <p>{l[lang].role}</p>
+        </>
+      ))
+    }
+  </article>
+  <article class="card person">
+    <p class="role">{p.network}</p>
+    <p>{t[lang].about.p2}</p>
+    <p>{t[lang].about.p3}</p>
+  </article>
+</div>
+
+<style>
+  .person {
+    border-top: 3px solid var(--gold);
+  }
+  .role {
+    font-weight: 700;
+    color: var(--ink-soft);
+    font-size: var(--step--1);
+    margin-bottom: 0.3rem;
+  }
+  h3 {
+    margin-bottom: 0.5rem;
+  }
+  h4 {
+    font-size: var(--step-0);
+    margin: 1rem 0 0.4rem;
+  }
+  ul {
+    margin: 0;
+    padding-inline-start: 1.1rem;
+  }
+</style>

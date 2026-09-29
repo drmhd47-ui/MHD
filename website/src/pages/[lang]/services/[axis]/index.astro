@@ -1,0 +1,77 @@
+---
+import Base from '../../../../layouts/Base.astro';
+import PageHead from '../../../../components/PageHead.astro';
+import { axes, servicesByAxis } from '../../../../data/catalog';
+import { langs, path, t } from '../../../../i18n';
+import type { Axis, Lang } from '../../../../data/catalog';
+
+export function getStaticPaths() {
+  return langs.flatMap((lang) => axes.map((axis) => ({ params: { lang, axis: axis.slug }, props: { lang, axis } })));
+}
+const { lang, axis } = Astro.props as { lang: Lang; axis: Axis };
+const s = t[lang];
+const list = servicesByAxis(axis.slug);
+---
+
+<Base lang={lang} title={axis[lang].title} description={`${axis[lang].title}: ${axis[lang].sub}.`} route={`services/${axis.slug}`}>
+  <PageHead
+    lang={lang}
+    eyebrow={`${s.services.eyebrow} — ${axis.num}`}
+    title={axis[lang].title}
+    lead={axis[lang].sub}
+    crumbs={[
+      { label: s.nav.home, href: path(lang) },
+      { label: s.services.title, href: path(lang, 'services') },
+      { label: axis[lang].title, href: path(lang, 'services', axis.slug) }
+    ]}
+  />
+  <section class="section">
+    <div class="wrap">
+      <p class="count">{s.services.inAxis(list.length)}</p>
+      <ul class="cards grid grid--2">
+        {
+          list.map((svc) => (
+            <li class="card">
+              <h2>
+                <a href={path(lang, 'services', axis.slug, svc.slug)}>{svc[lang].title}</a>
+              </h2>
+              <p>{svc[lang].desc}</p>
+              <p class="serve">
+                <strong>{s.services.weServe}:</strong> {svc[lang].serve}
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .count {
+    font-weight: 700;
+    color: var(--ink-soft);
+  }
+  .cards {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .card {
+    border-top: 3px solid var(--gold);
+  }
+  h2 {
+    font-size: var(--step-1);
+  }
+  h2 a {
+    text-decoration: none;
+  }
+  h2 a:hover {
+    text-decoration: underline;
+  }
+  .serve {
+    color: var(--ink-soft);
+    font-size: var(--step--1);
+    margin: 0;
+  }
+</style>

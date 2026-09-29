@@ -1,0 +1,63 @@
+---
+import { getEntry, render } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import { langPaths } from '../../../lib/paths';
+import { PRIVACY_POLICY_VERSION } from '../../../data/company';
+import { path, t } from '../../../i18n';
+import type { Lang } from '../../../data/catalog';
+
+export const getStaticPaths = langPaths;
+const { lang } = Astro.props as { lang: Lang };
+const s = t[lang];
+const entry = await getEntry('legal', `privacy-${lang}`);
+const { Content } = await render(entry!);
+const versionLabel = lang === 'ar' ? 'تاريخ الإصدار' : 'Version';
+---
+
+<Base
+  lang={lang}
+  title={s.footer.privacy}
+  description={lang === 'ar' ? 'كيف تجمع مجموعة إم القانونية البيانات الشخصية وتعالجها وتحميها، وحقوقك وفق نظام حماية البيانات الشخصية.' : 'How M GROUP collects, processes and protects personal data, and your rights under the Personal Data Protection Law.'}
+  route="privacy"
+>
+  <PageHead
+    lang={lang}
+    title={s.footer.privacy}
+    crumbs={[
+      { label: s.nav.home, href: path(lang) },
+      { label: s.footer.privacy, href: path(lang, 'privacy') }
+    ]}
+  >
+    <p class="version">{versionLabel}: <time class="ltr" datetime={PRIVACY_POLICY_VERSION}>{PRIVACY_POLICY_VERSION}</time></p>
+  </PageHead>
+  <section class="section">
+    <div class="wrap prose legal">
+      <Content />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .version {
+    color: var(--on-dark-soft);
+    margin: 0;
+  }
+  .legal :global(table) {
+    border-collapse: collapse;
+    inline-size: 100%;
+    margin-block: 1rem;
+    font-size: var(--step--1);
+  }
+  .legal :global(th),
+  .legal :global(td) {
+    border: 1px solid var(--line);
+    padding: 0.6rem 0.8rem;
+    text-align: start;
+    vertical-align: top;
+  }
+  .legal :global(th) {
+    background: var(--navy);
+    color: var(--cream);
+  }
+</style>

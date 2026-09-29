@@ -1,0 +1,41 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import Coverage from '../../../components/Coverage.astro';
+import { langPaths } from '../../../lib/paths';
+import { company } from '../../../data/company';
+import { path, t } from '../../../i18n';
+import type { Lang } from '../../../data/catalog';
+
+export const getStaticPaths = langPaths;
+const { lang } = Astro.props as { lang: Lang };
+const s = t[lang];
+---
+
+<Base lang={lang} title={s.coverage.eyebrow} description={s.coverage.lead} route="coverage">
+  <PageHead
+    lang={lang}
+    eyebrow={s.coverage.eyebrow}
+    title={s.coverage.title}
+    lead={s.coverage.lead}
+    crumbs={[
+      { label: s.nav.home, href: path(lang) },
+      { label: s.coverage.eyebrow, href: path(lang, 'coverage') }
+    ]}
+  />
+  <section class="section">
+    <div class="wrap">
+      <Coverage lang={lang} />
+      <p class="hq">
+        <strong>{s.coverage.hq}:</strong>
+        {company.address[lang]}
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hq {
+    margin-top: 1.5rem;
+  }
+</style>

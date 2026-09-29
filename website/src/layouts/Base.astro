@@ -1,0 +1,109 @@
+---
+import '@fontsource/noto-naskh-arabic/400.css';
+import '@fontsource/noto-naskh-arabic/700.css';
+import '../styles/global.css';
+import naskh400 from '@fontsource/noto-naskh-arabic/files/noto-naskh-arabic-arabic-400-normal.woff2?url';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { company } from '../data/company';
+import { dir, other, t } from '../i18n';
+import type { Lang } from '../data/catalog';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  /** المسار داخل اللغة بدون بادئة اللغة، مثل "services/business". سلسلة فارغة للرئيسية. */
+  route: string;
+  jsonLd?: object[];
+  noindex?: boolean;
+  /** صفحات بلا مقابل في اللغة الأخرى (مثل مقال بلغة واحدة) */
+  alternate?: boolean;
+}
+
+const { lang, title, description, route, jsonLd = [], noindex = false, alternate = true } = Astro.props;
+const site = Astro.site!;
+const clean = route.replace(/^\/|\/$/g, '');
+const url = (l: Lang) => new URL(`/${l}/${clean ? clean + '/' : ''}`, site).href;
+const canonical = url(lang);
+const fullTitle = clean ? `${title} | ${t[lang].siteName}` : `${t[lang].siteName} | ${t[lang].tagline}`;
+const ogImage = new URL(`/og/og-${lang}.jpg`, site).href;
+
+const orgLd = {
+  '@context': 'https://schema.org',
+  '@type': 'LegalService',
+  '@id': `${site.href}#organization`,
+  name: company.nameAr,
+  alternateName: [company.nameEn, company.registeredNameEn],
+  url: site.href,
+  logo: new URL('/icons/logo-512.png', site).href,
+  image: ogImage,
+  email: company.email,
+  telephone: company.phoneE164,
+  taxID: company.vatNumber,
+  identifier: [
+    { '@type': 'PropertyValue', propertyID: 'CR', value: company.commercialRegistration },
+    { '@type': 'PropertyValue', propertyID: 'LawPracticeLicense', value: company.lawPracticeLicense }
+  ],
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: lang === 'ar' ? 'مركز الملك عبدالله المالي (كافد)' : 'King Abdullah Financial District (KAFD)',
+    addressLocality: company.address.locality,
+    postalCode: company.address.postalCode,
+    addressCountry: company.address.country
+  },
+  openingHours: company.hours.schema,
+  areaServed: { '@type': 'Country', name: 'Saudi Arabia' },
+  sameAs: company.social.map((s) => s.url)
+};
+---
+
+<!doctype html>
+<html lang={lang} dir={dir(lang)}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    {noindex ? <meta name="robots" content="noindex, follow" /> : <link rel="canonical" href={canonical} />}
+    {
+      alternate && !noindex && (
+        <>
+          <link rel="alternate" hreflang="ar" href={url('ar')} />
+          <link rel="alternate" hreflang="en" href={url('en')} />
+          <link rel="alternate" hreflang="x-default" href={url('ar')} />
+        </>
+      )
+    }
+    <meta name="theme-color" content="#0a1b2e" />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="preload" href={naskh400} as="font" type="font/woff2" crossorigin />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={t[lang].siteName} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={lang === 'ar' ? 'ar_SA' : 'en_US'} />
+    <meta property="og:locale:alternate" content={other(lang) === 'ar' ? 'ar_SA' : 'en_US'} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@mgrpksa" />
+
+    <script type="application/ld+json" set:html={JSON.stringify([orgLd, ...jsonLd])} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{t[lang].skip}</a>
+    <Header lang={lang} route={clean} />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+  </body>
+</html>

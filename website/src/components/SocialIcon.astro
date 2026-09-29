@@ -1,0 +1,12 @@
+---
+import { siInstagram, siSnapchat, siTiktok, siWhatsapp, siX } from 'simple-icons';
+
+interface Props {
+  name: 'x' | 'instagram' | 'snapchat' | 'tiktok' | 'whatsapp';
+  size?: number;
+}
+const { name, size = 18 } = Astro.props;
+const icon = { x: siX, instagram: siInstagram, snapchat: siSnapchat, tiktok: siTiktok, whatsapp: siWhatsapp }[name];
+---
+
+<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width={size} height={size} fill="currentColor"><path d={icon.path}></path></svg>

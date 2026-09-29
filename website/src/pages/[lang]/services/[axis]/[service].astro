@@ -1,0 +1,177 @@
+---
+import Base from '../../../../layouts/Base.astro';
+import PageHead from '../../../../components/PageHead.astro';
+import { axes, services, servicesByAxis } from '../../../../data/catalog';
+import { langs, path, t } from '../../../../i18n';
+import type { Axis, Lang, Service } from '../../../../data/catalog';
+
+export function getStaticPaths() {
+  return langs.flatMap((lang) =>
+    services.map((service) => ({
+      params: { lang, axis: service.axis, service: service.slug },
+      props: { lang, service, axis: axes.find((a) => a.slug === service.axis)! }
+    }))
+  );
+}
+const { lang, service, axis } = Astro.props as { lang: Lang; service: Service; axis: Axis };
+const s = t[lang];
+const x = service[lang];
+const related = servicesByAxis(axis.slug).filter((r) => r.slug !== service.slug);
+const route = `services/${axis.slug}/${service.slug}`;
+
+const serviceLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: x.title,
+  description: x.desc,
+  serviceType: axis[lang].title,
+  provider: { '@id': `${Astro.site!.href}#organization` },
+  areaServed: { '@type': 'Country', name: 'Saudi Arabia' },
+  url: new URL(path(lang, route), Astro.site).href,
+  inLanguage: lang
+};
+---
+
+<Base lang={lang} title={x.title} description={`${x.desc} ${s.services.weServe}: ${x.serve}`} route={route} jsonLd={[serviceLd]}>
+  <PageHead
+    lang={lang}
+    eyebrow={axis[lang].title}
+    title={x.title}
+    lead={x.desc}
+    crumbs={[
+      { label: s.nav.home, href: path(lang) },
+      { label: s.services.title, href: path(lang, 'services') },
+      { label: axis[lang].title, href: path(lang, 'services', axis.slug) },
+      { label: x.title, href: path(lang, route) }
+    ]}
+  />
+
+  <section class="section">
+    <div class="wrap layout">
+      <div class="blocks">
+        <section class="block" aria-labelledby="serve">
+          <h2 id="serve">{s.services.weServe}</h2>
+          <p>{x.serve}</p>
+        </section>
+        <section class="block" aria-labelledby="offer">
+          <h2 id="offer">{s.services.offer}</h2>
+          <ul>{x.offer.map((o) => <li>{o}</li>)}</ul>
+        </section>
+        <section class="block" aria-labelledby="diff">
+          <h2 id="diff">{s.services.diff}</h2>
+          <p>{x.diff}</p>
+        </section>
+        <section class="block" aria-labelledby="out">
+          <h2 id="out">{s.services.out}</h2>
+          <p>{x.out}</p>
+        </section>
+        {
+          service.delivery !== 'direct' && (
+            <aside class="delivery" aria-labelledby="delivery">
+              <h2 id="delivery">{s.services.deliveryTitle}</h2>
+              <p>{s.services.delivery[service.delivery]}</p>
+            </aside>
+          )
+        }
+      </div>
+
+      <aside class="side">
+        <div class="card cta">
+          <h2>{s.services.inquire}</h2>
+          <p>{s.contact.lead}</p>
+          <a class="btn btn--solid" href={`${path(lang, 'contact')}?service=${service.slug}#request`}>{s.cta}</a>
+        </div>
+        {
+          related.length > 0 && (
+            <nav class="card related" aria-labelledby="related">
+              <h2 id="related">{s.services.related}</h2>
+              <ul>
+                {related.map((r) => (
+                  <li>
+                    <a href={path(lang, 'services', axis.slug, r.slug)}>{r[lang].title}</a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )
+        }
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .layout {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 20rem);
+    align-items: start;
+  }
+  .blocks {
+    display: grid;
+    gap: 1.25rem;
+  }
+  .block {
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .block h2,
+  .delivery h2,
+  .side h2 {
+    font-size: var(--step-1);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .block h2::before {
+    content: '';
+    inline-size: 1.5rem;
+    block-size: 2px;
+    background: var(--gold);
+  }
+  .block ul {
+    margin: 0;
+    padding-inline-start: 1.2rem;
+  }
+  .block li + li {
+    margin-top: 0.35rem;
+  }
+  .block p {
+    margin: 0;
+    max-width: 68ch;
+  }
+  .delivery {
+    background: var(--shade);
+    border: 1px solid var(--line);
+    border-inline-start: 4px solid var(--navy);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+  }
+  .delivery p {
+    margin: 0;
+  }
+  .side {
+    display: grid;
+    gap: 1rem;
+    position: sticky;
+    top: 7.5rem;
+  }
+  .cta {
+    border-top: 3px solid var(--gold);
+  }
+  .related ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.4rem;
+  }
+  @media (max-width: 56rem) {
+    .layout {
+      grid-template-columns: 1fr;
+    }
+    .side {
+      position: static;
+    }
+  }
+</style>

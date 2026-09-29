@@ -1,0 +1,82 @@
+---
+import { render } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import { publishedArticles } from '../../../lib/articles';
+import { langs, path, t } from '../../../i18n';
+import type { Lang } from '../../../data/catalog';
+
+export async function getStaticPaths() {
+  const out = [];
+  for (const lang of langs)
+    for (const article of await publishedArticles(lang))
+      out.push({ params: { lang, slug: article.id.replace(/\.md$/, '') }, props: { lang, article } });
+  return out;
+}
+const { lang, article } = Astro.props as { lang: Lang; article: Awaited<ReturnType<typeof publishedArticles>>[number] };
+const s = t[lang];
+const d = article.data;
+const { Content } = await render(article);
+const slug = article.id.replace(/\.md$/, '');
+const fmt = new Intl.DateTimeFormat(lang === 'ar' ? 'ar-SA-u-ca-gregory-nu-latn' : 'en-GB', { dateStyle: 'long' });
+const ld = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: d.title,
+  description: d.summary,
+  inLanguage: lang,
+  datePublished: d.publishedAt.toISOString(),
+  dateModified: (d.updatedAt ?? d.publishedAt).toISOString(),
+  publisher: { '@id': `${Astro.site!.href}#organization` },
+  citation: d.sources.map((x) => x.url)
+};
+---
+
+<Base lang={lang} title={d.title} description={d.summary} route={`articles/${slug}`} jsonLd={[ld]} alternate={false}>
+  <PageHead
+    lang={lang}
+    title={d.title}
+    lead={d.summary}
+    crumbs={[
+      { label: s.nav.home, href: path(lang) },
+      { label: s.nav.articles, href: path(lang, 'articles') },
+      { label: d.title, href: path(lang, 'articles', slug) }
+    ]}
+  >
+    <p class="meta">
+      {s.articles.published} <time datetime={d.publishedAt.toISOString().slice(0, 10)}>{fmt.format(d.publishedAt)}</time> · {s.articles.reviewed}: {d.reviewedBy}
+    </p>
+  </PageHead>
+  <section class="section">
+    <div class="wrap">
+      <article class="prose">
+        <Content />
+        <h2>{s.articles.sources}</h2>
+        <ul>
+          {
+            d.sources.map((x) => (
+              <li>
+                <a href={x.url} rel="noopener" target="_blank">{x.title}</a>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="notice">{s.articles.notice}</p>
+      </article>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .meta {
+    color: var(--on-dark-soft);
+    margin: 0;
+  }
+  .notice {
+    margin-top: 2rem;
+    padding: 1rem 1.25rem;
+    background: var(--shade);
+    border-inline-start: 3px solid var(--gold);
+    font-size: var(--step--1);
+  }
+</style>

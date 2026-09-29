@@ -1,0 +1,29 @@
+---
+import Base from '../../../../layouts/Base.astro';
+import PageHead from '../../../../components/PageHead.astro';
+import { langPaths } from '../../../../lib/paths';
+import { path, t } from '../../../../i18n';
+import type { Lang } from '../../../../data/catalog';
+
+export const getStaticPaths = langPaths;
+const { lang } = Astro.props as { lang: Lang };
+const f = t[lang].form;
+---
+
+<Base lang={lang} title={f.noscriptThanks} description={f.successNext} route="contact/thanks" noindex>
+  <PageHead lang={lang} title={f.noscriptThanks} lead={f.successNext} />
+  <section class="section">
+    <div class="wrap measure">
+      <p data-ref-line hidden>{f.successRef}: <strong class="ltr" data-ref></strong></p>
+      <p><a href={path(lang)}>{t[lang].notFound.home}</a></p>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const ref = new URLSearchParams(location.search).get('ref');
+  if (ref && /^[A-Z0-9-]{6,20}$/.test(ref)) {
+    document.querySelector('[data-ref]')!.textContent = ref;
+    document.querySelector('[data-ref-line]')!.removeAttribute('hidden');
+  }
+</script>

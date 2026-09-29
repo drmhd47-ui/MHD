@@ -1,0 +1,84 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import People from '../../../components/People.astro';
+import TrackRecord from '../../../components/TrackRecord.astro';
+import { langPaths } from '../../../lib/paths';
+import { path, t } from '../../../i18n';
+import type { Lang } from '../../../data/catalog';
+
+export const getStaticPaths = langPaths;
+const { lang } = Astro.props as { lang: Lang };
+const s = t[lang];
+const a = s.about;
+---
+
+<Base lang={lang} title={a.eyebrow} description={a.p1} route="about">
+  <PageHead
+    lang={lang}
+    eyebrow={a.eyebrow}
+    title={a.title}
+    crumbs={[
+      { label: s.nav.home, href: path(lang) },
+      { label: a.eyebrow, href: path(lang, 'about') }
+    ]}
+  >
+    <TrackRecord lang={lang} showSummary />
+  </PageHead>
+
+  <section class="section">
+    <div class="wrap measure">
+      <p class="lead">{a.p1}</p>
+      <p>{a.p2}</p>
+      <p>{a.p3}</p>
+    </div>
+  </section>
+
+  <section class="section section--shade">
+    <div class="wrap">
+      <h2>{a.methodTitle}</h2>
+      <div class="grid grid--3">
+        {
+          a.method.map((m) => (
+            <article class="card">
+              <h3>{m.t}</h3>
+              <p>{m.d}</p>
+            </article>
+          ))
+        }
+      </div>
+      <div class="card mission">
+        <h2>{a.missionTitle}</h2>
+        <p>{a.mission}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <h2>{s.people.title}</h2>
+      <People lang={lang} />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .card h3 {
+    margin-bottom: 0.4rem;
+  }
+  .card p {
+    margin: 0;
+    color: var(--ink-soft);
+  }
+  .mission {
+    margin-top: 1.25rem;
+    border-inline-start: 4px solid var(--gold);
+  }
+  .mission h2 {
+    font-size: var(--step-2);
+  }
+  .mission p {
+    color: var(--ink);
+    font-size: var(--step-1);
+  }
+</style>

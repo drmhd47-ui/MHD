@@ -1,0 +1,14 @@
+{
+  "name": "mgroup-intake",
+  "private": true,
+  "type": "module",
+  "description": "خادم استقبال طلبات الاستشارة من الموقع العام — مستقل عن الموقع وعن النظام الداخلي",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.16"
+  }
+}

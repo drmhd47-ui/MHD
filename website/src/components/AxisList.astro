@@ -1,0 +1,160 @@
+---
+import { axes, servicesByAxis, services } from '../data/catalog';
+import { path, t } from '../i18n';
+import type { Lang } from '../data/catalog';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const s = t[lang].services;
+---
+
+<p class="count">{s.count(services.length, axes.length)}</p>
+<div class="axes">
+  {
+    axes.map((a, i) => {
+      const list = servicesByAxis(a.slug);
+      return (
+        <details class="axis" open={i === 0}>
+          <summary>
+            <span class="n num" aria-hidden="true">{a.num}</span>
+            <span class="head">
+              <span class="title">{a[lang].title}</span>
+              <span class="sub">{a[lang].sub}</span>
+            </span>
+            <span class="meta">{s.inAxis(list.length)}</span>
+          </summary>
+          <ul class="svc">
+            {list.map((svc) => (
+              <li>
+                <a href={path(lang, 'services', a.slug, svc.slug)}>
+                  <strong>{svc[lang].title}</strong>
+                  <span>{svc[lang].desc}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <p class="more">
+            <a href={path(lang, 'services', a.slug)}>{s.viewAxis}: {a[lang].title}</a>
+          </p>
+        </details>
+      );
+    })
+  }
+</div>
+
+<style>
+  .count {
+    color: var(--ink-soft);
+    font-weight: 700;
+  }
+  .axes {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .axis {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--cream);
+  }
+  .axis[open] {
+    border-color: var(--gold);
+  }
+  summary {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    list-style: none;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary::after {
+    content: '+';
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+    font-size: 1.4rem;
+    color: var(--gold);
+    line-height: 1;
+    display: none;
+  }
+  .n {
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--gold);
+    border-radius: var(--radius);
+    color: var(--navy);
+    font-weight: 700;
+  }
+  .head {
+    display: grid;
+  }
+  .title {
+    font-weight: 700;
+    font-size: var(--step-1);
+    color: var(--navy);
+  }
+  .sub {
+    color: var(--ink-soft);
+    font-size: var(--step--1);
+  }
+  .meta {
+    font-size: var(--step--1);
+    font-weight: 700;
+    color: var(--navy);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0.1rem 0.75rem;
+    white-space: nowrap;
+  }
+  .svc {
+    list-style: none;
+    margin: 0;
+    padding: 0 1.25rem 0.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+    gap: 0.75rem;
+  }
+  .svc a {
+    display: grid;
+    gap: 0.2rem;
+    block-size: 100%;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    text-decoration: none;
+    background: var(--shade);
+  }
+  .svc a:hover {
+    border-color: var(--gold);
+  }
+  .svc strong {
+    color: var(--navy);
+  }
+  .svc span {
+    color: var(--ink-soft);
+    font-size: var(--step--1);
+    line-height: 1.7;
+  }
+  .more {
+    padding: 0.5rem 1.25rem 1.25rem;
+    margin: 0;
+    font-weight: 700;
+  }
+  @media (max-width: 34rem) {
+    summary {
+      grid-template-columns: auto minmax(0, 1fr);
+    }
+    .meta {
+      grid-column: 2;
+      justify-self: start;
+    }
+  }
+</style>

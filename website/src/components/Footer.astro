@@ -1,0 +1,161 @@
+---
+import logo from '../assets/logo-mark.svg';
+import SocialIcon from './SocialIcon.astro';
+import { company } from '../data/company';
+import { path, t } from '../i18n';
+import type { Lang } from '../data/catalog';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const s = t[lang];
+const f = s.footer;
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer section--dark">
+  <div class="wrap cols">
+    <div class="col brand-col">
+      <span class="plate"><img src={logo.src} width="140" height="135" alt={s.siteName} loading="lazy" /></span>
+      <p class="firm">{company.nameAr} — <span lang="en">{company.nameEn}</span></p>
+      <p class="soft">{lang === 'ar' ? company.legalFormAr : company.legalFormEn}</p>
+    </div>
+
+    <div class="col">
+      <h2 class="h">{f.legal}</h2>
+      <dl class="facts">
+        <div><dt>{f.registeredName}</dt><dd lang="en" class="ltr">{company.registeredNameEn} ({company.registeredShortName})</dd></div>
+        <div><dt>{f.cr}</dt><dd class="num">{company.commercialRegistration}</dd></div>
+        <div><dt>{f.license}</dt><dd class="num">{company.lawPracticeLicense}</dd></div>
+        <div><dt>{f.vat}</dt><dd class="num">{company.vatNumber}</dd></div>
+      </dl>
+    </div>
+
+    <div class="col">
+      <h2 class="h">{s.contact.direct}</h2>
+      <address class="facts">
+        <p>{company.address[lang]}</p>
+        <p>{s.contact.phone}: <a href={`tel:${company.phoneE164}`} class="num ltr">{company.phoneDisplay}</a></p>
+        <p>{s.contact.email}: <a href={`mailto:${company.email}`} class="ltr">{company.email}</a></p>
+        <p>{s.contact.hours}: {company.hours[lang]}</p>
+      </address>
+    </div>
+
+    <div class="col">
+      <h2 class="h">{f.follow}</h2>
+      <ul class="social">
+        {
+          company.social.map((x) => (
+            <li>
+              <a href={x.url} rel="noopener me" target="_blank">
+                <SocialIcon name={x.key} />
+                <span>
+                  {x.label} <span class="ltr soft">{x.handle}</span>
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <ul class="links">
+        <li><a href={path(lang, 'privacy')}>{f.privacy}</a></li>
+        <li><a href={path(lang, 'terms')}>{f.terms}</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="wrap bottom">
+    <p class="disclaimer">{f.disclaimer}</p>
+    <p class="soft">© <span class="num">{year}</span> {company.nameAr} — {f.rights}</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding-block: 3.5rem 2rem;
+    font-size: 0.95rem;
+  }
+  .cols {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  }
+  .col {
+    min-width: 0;
+  }
+  .plate {
+    display: inline-grid;
+    place-items: center;
+    background: var(--cream);
+    border: 1px solid var(--gold);
+    border-radius: 0.5rem;
+    padding: 0.6rem 0.8rem;
+    margin-bottom: 1rem;
+  }
+  .plate img {
+    inline-size: 8.75rem;
+    display: block;
+  }
+  .firm {
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+  .h {
+    font-size: 1.05rem;
+    color: var(--on-dark);
+    margin-bottom: 0.9rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--gold);
+    display: inline-block;
+  }
+  .soft {
+    color: var(--on-dark-soft);
+  }
+  .facts {
+    margin: 0;
+    font-style: normal;
+  }
+  .facts p {
+    margin: 0 0 0.4rem;
+  }
+  .facts div {
+    margin-bottom: 0.5rem;
+  }
+  .facts dt {
+    color: var(--on-dark-soft);
+    font-size: 0.85rem;
+  }
+  .facts dd {
+    margin: 0;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+  }
+  .social,
+  .links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.4rem;
+  }
+  .social a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    min-block-size: 2rem;
+  }
+  .links {
+    margin-top: 1rem;
+  }
+  .bottom {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line-dark);
+  }
+  .disclaimer {
+    color: var(--on-dark-soft);
+    max-width: 80ch;
+  }
+</style>

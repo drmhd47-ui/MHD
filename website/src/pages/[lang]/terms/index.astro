@@ -1,0 +1,63 @@
+---
+import { getEntry, render } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import { langPaths } from '../../../lib/paths';
+const TERMS_VERSION = '2026-09-29';
+import { path, t } from '../../../i18n';
+import type { Lang } from '../../../data/catalog';
+
+export const getStaticPaths = langPaths;
+const { lang } = Astro.props as { lang: Lang };
+const s = t[lang];
+const entry = await getEntry('legal', `terms-${lang}`);
+const { Content } = await render(entry!);
+const versionLabel = lang === 'ar' ? 'تاريخ الإصدار' : 'Version';
+---
+
+<Base
+  lang={lang}
+  title={s.footer.terms}
+  description={lang === 'ar' ? 'شروط استخدام موقع مجموعة إم القانونية وطبيعة محتواه.' : 'Terms of use of the M GROUP website and the nature of its content.'}
+  route="terms"
+>
+  <PageHead
+    lang={lang}
+    title={s.footer.terms}
+    crumbs={[
+      { label: s.nav.home, href: path(lang) },
+      { label: s.footer.terms, href: path(lang, 'terms') }
+    ]}
+  >
+    <p class="version">{versionLabel}: <time class="ltr" datetime={TERMS_VERSION}>{TERMS_VERSION}</time></p>
+  </PageHead>
+  <section class="section">
+    <div class="wrap prose legal">
+      <Content />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .version {
+    color: var(--on-dark-soft);
+    margin: 0;
+  }
+  .legal :global(table) {
+    border-collapse: collapse;
+    inline-size: 100%;
+    margin-block: 1rem;
+    font-size: var(--step--1);
+  }
+  .legal :global(th),
+  .legal :global(td) {
+    border: 1px solid var(--line);
+    padding: 0.6rem 0.8rem;
+    text-align: start;
+    vertical-align: top;
+  }
+  .legal :global(th) {
+    background: var(--navy);
+    color: var(--cream);
+  }
+</style>

@@ -1,0 +1,85 @@
+---
+import { company } from '../data/company';
+import { num, t } from '../i18n';
+import type { Lang } from '../data/catalog';
+
+interface Props {
+  lang: Lang;
+  showSummary?: boolean;
+}
+const { lang, showSummary = false } = Astro.props;
+const r = t[lang].record;
+const tr = company.partnersTrackRecord;
+const stats = [
+  { n: tr.cases, l: r.cases },
+  { n: tr.contracts, l: r.contracts },
+  { n: tr.consultations, l: r.consultations }
+];
+---
+
+<figure class="record">
+  <figcaption class="record-title">{r.title}</figcaption>
+  <dl class="stats">
+    {
+      stats.map((s) => (
+        <div class="stat">
+          <dt>{s.l}</dt>
+          <dd class="num">
+            <span class="ltr">+{num(lang, s.n)}</span>
+          </dd>
+        </div>
+      ))
+    }
+  </dl>
+  <p class="note">{r.note}</p>
+  {showSummary && <p class="summary">{r.summary}</p>}
+</figure>
+
+<style>
+  .record {
+    margin: 0;
+    border-top: 1px solid var(--line-dark);
+    padding-top: 1.25rem;
+    max-width: 44rem;
+  }
+  .record-title {
+    font-weight: 700;
+    color: var(--on-dark);
+    margin-bottom: 0.75rem;
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin: 0;
+  }
+  .stat {
+    display: flex;
+    flex-direction: column-reverse;
+    border-inline-start: 2px solid var(--gold);
+    padding-inline-start: 0.75rem;
+  }
+  .stat dt {
+    font-size: var(--step--1);
+    color: var(--on-dark-soft);
+  }
+  .stat dd {
+    margin: 0;
+    font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.1rem);
+    font-weight: 700;
+    color: var(--on-dark);
+    line-height: 1.3;
+    white-space: nowrap;
+  }
+  .note,
+  .summary {
+    margin-top: 0.9rem;
+    font-size: var(--step--1);
+    color: var(--on-dark-soft);
+  }
+  @media (max-width: 30rem) {
+    .stats {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

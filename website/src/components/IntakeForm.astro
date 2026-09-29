@@ -1,0 +1,343 @@
+---
+import { axes, servicesByAxis } from '../data/catalog';
+import { PRIVACY_POLICY_VERSION } from '../data/company';
+import { path, t } from '../i18n';
+import type { Lang } from '../data/catalog';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const f = t[lang].form;
+---
+
+<form
+  id="request"
+  class="intake card"
+  action="/api/intake"
+  method="post"
+  novalidate
+  data-intake
+  data-msg-name={f.errors.name}
+  data-msg-phone={f.errors.phone}
+  data-msg-email={f.errors.email}
+  data-msg-consent={f.errors.consent}
+  data-msg-server={f.errors.server}
+  data-msg-rate={f.errors.rate}
+  data-msg-sending={f.sending}
+  data-msg-success={f.success}
+  data-msg-ref={f.successRef}
+  data-msg-next={f.successNext}
+>
+  <h2>{f.title}</h2>
+  <p class="intro">{f.intro}</p>
+
+  <div class="errors" role="alert" tabindex="-1" hidden data-errors></div>
+
+  <input type="hidden" name="lang" value={lang} />
+  <input type="hidden" name="policyVersion" value={PRIVACY_POLICY_VERSION} />
+  <input type="hidden" name="renderedAt" value="" data-rendered-at />
+
+  <div class="hp" aria-hidden="true">
+    <label for="intake-website">{f.hp}</label>
+    <input id="intake-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <div class="field">
+    <label for="intake-name">{f.name} <span class="req">({f.required})</span></label>
+    <input id="intake-name" name="name" type="text" required minlength="2" maxlength="120" autocomplete="name" aria-describedby="intake-name-err" />
+    <p class="err" id="intake-name-err" hidden></p>
+  </div>
+
+  <fieldset class="field">
+    <legend>{f.contactMethod} <span class="req">({f.required})</span></legend>
+    <div class="choices">
+      <label class="choice"><input type="radio" name="contactMethod" value="phone" checked /> {f.byPhone}</label>
+      <label class="choice"><input type="radio" name="contactMethod" value="email" /> {f.byEmail}</label>
+    </div>
+  </fieldset>
+
+  <div class="row">
+    <div class="field" data-for="phone">
+      <label for="intake-phone">{f.phone}</label>
+      <input
+        id="intake-phone"
+        name="phone"
+        type="tel"
+        inputmode="numeric"
+        dir="ltr"
+        maxlength="14"
+        autocomplete="tel-national"
+        placeholder={f.phoneHint}
+        aria-describedby="intake-phone-err"
+      />
+      <p class="err" id="intake-phone-err" hidden></p>
+    </div>
+    <div class="field" data-for="email">
+      <label for="intake-email">{f.email}</label>
+      <input id="intake-email" name="email" type="email" dir="ltr" maxlength="160" autocomplete="email" aria-describedby="intake-email-err" />
+      <p class="err" id="intake-email-err" hidden></p>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="intake-service">{f.service} <span class="opt">({f.optional})</span></label>
+    <select id="intake-service" name="service" data-service-select>
+      <option value="">{f.serviceNone}</option>
+      {
+        axes.map((a) => (
+          <optgroup label={a[lang].title}>
+            {servicesByAxis(a.slug).map((s) => (
+              <option value={s.slug}>{s[lang].title}</option>
+            ))}
+          </optgroup>
+        ))
+      }
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="intake-opposing">{f.opposing} <span class="opt">({f.optional})</span></label>
+    <input id="intake-opposing" name="opposingParty" type="text" maxlength="160" aria-describedby="intake-opposing-hint" />
+    <p class="hint" id="intake-opposing-hint">{f.opposingHint}</p>
+  </div>
+
+  <div class="field consent">
+    <label class="choice">
+      <input id="intake-consent" name="consent" type="checkbox" value="yes" required aria-describedby="intake-consent-err" />
+      <span>{f.consent} <a href={path(lang, 'privacy')}>{f.privacyLink}</a></span>
+    </label>
+    <p class="err" id="intake-consent-err" hidden></p>
+  </div>
+
+  <button class="btn btn--solid" type="submit" data-submit>{f.submit}</button>
+  <p class="status" role="status" aria-live="polite" data-status></p>
+</form>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-intake]');
+  if (form) {
+    const d = form.dataset;
+    const q = <T extends Element>(sel: string) => form.querySelector<T>(sel)!;
+    q<HTMLInputElement>('[data-rendered-at]').value = String(Date.now());
+
+    // اختيار الخدمة مسبقاً عند القدوم من صفحة خدمة: /contact/?service=slug
+    const pre = new URLSearchParams(location.search).get('service');
+    const select = q<HTMLSelectElement>('[data-service-select]');
+    if (pre && [...select.options].some((o) => o.value === pre)) select.value = pre;
+
+    const showErr = (id: string, msg: string | null) => {
+      const el = form.querySelector<HTMLElement>(`#intake-${id}-err`);
+      const input = form.querySelector<HTMLElement>(`#intake-${id}`);
+      if (!el || !input) return;
+      el.textContent = msg ?? '';
+      el.hidden = !msg;
+      input.setAttribute('aria-invalid', msg ? 'true' : 'false');
+    };
+
+    const validate = () => {
+      const data = new FormData(form);
+      const method = data.get('contactMethod');
+      const phone = String(data.get('phone') ?? '').replace(/[\s-]/g, '');
+      const email = String(data.get('email') ?? '').trim();
+      const errors: Record<string, string> = {};
+      if (String(data.get('name') ?? '').trim().length < 2) errors.name = d.msgName!;
+      if (method === 'phone' || phone) {
+        if (!/^(?:05\d{8}|\+9665\d{8}|9665\d{8})$/.test(phone)) errors.phone = d.msgPhone!;
+      }
+      if (method === 'email' || email) {
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) errors.email = d.msgEmail!;
+      }
+      if (!data.get('consent')) errors.consent = d.msgConsent!;
+      ['name', 'phone', 'email', 'consent'].forEach((k) => showErr(k, errors[k] ?? null));
+      return errors;
+    };
+
+    const status = q<HTMLElement>('[data-status]');
+    const summary = q<HTMLElement>('[data-errors]');
+    const button = q<HTMLButtonElement>('[data-submit]');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errors = validate();
+      const keys = Object.keys(errors);
+      if (keys.length) {
+        summary.innerHTML = '';
+        const ul = document.createElement('ul');
+        keys.forEach((k) => {
+          const li = document.createElement('li');
+          const a = document.createElement('a');
+          a.href = `#intake-${k}`;
+          a.textContent = errors[k];
+          li.append(a);
+          ul.append(li);
+        });
+        summary.append(ul);
+        summary.hidden = false;
+        summary.focus();
+        return;
+      }
+      summary.hidden = true;
+      button.disabled = true;
+      status.textContent = d.msgSending!;
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          headers: { Accept: 'application/json' },
+          body: new URLSearchParams(new FormData(form) as unknown as Record<string, string>)
+        });
+        if (res.status === 429) throw new Error('rate');
+        const body = await res.json().catch(() => ({}));
+        if (!res.ok || !body.reference) {
+          if (body.errors) {
+            Object.entries(body.errors as Record<string, string>).forEach(([k]) => {
+              const key = `msg${k[0].toUpperCase()}${k.slice(1)}`;
+              showErr(k, d[key] ?? d.msgServer!);
+            });
+          }
+          throw new Error('server');
+        }
+        const done = document.createElement('div');
+        done.className = 'done';
+        done.setAttribute('tabindex', '-1');
+        const h = document.createElement('h2');
+        h.textContent = d.msgSuccess!;
+        const ref = document.createElement('p');
+        ref.innerHTML = `${d.msgRef}: <strong class="ltr"></strong>`;
+        ref.querySelector('strong')!.textContent = body.reference;
+        const next = document.createElement('p');
+        next.textContent = d.msgNext!;
+        done.append(h, ref, next);
+        form.replaceChildren(done);
+        done.focus();
+      } catch (err) {
+        status.textContent = (err as Error).message === 'rate' ? d.msgRate! : d.msgServer!;
+        button.disabled = false;
+      }
+    });
+  }
+</script>
+
+<style>
+  .intake {
+    display: grid;
+    gap: 1.1rem;
+    padding: clamp(1.25rem, 3vw, 2rem);
+  }
+  .intake h2 {
+    font-size: var(--step-2);
+    margin: 0;
+  }
+  .intro,
+  .hint {
+    color: var(--ink-soft);
+    font-size: var(--step--1);
+    margin: 0;
+  }
+  .field {
+    display: grid;
+    gap: 0.35rem;
+    min-width: 0;
+    border: 0;
+    margin: 0;
+    padding: 0;
+  }
+  .field > label,
+  legend {
+    font-weight: 700;
+    color: var(--navy);
+    padding: 0;
+  }
+  .req,
+  .opt {
+    font-weight: 400;
+    color: var(--ink-soft);
+    font-size: var(--step--1);
+  }
+  input[type='text'],
+  input[type='tel'],
+  input[type='email'],
+  select {
+    font: inherit;
+    inline-size: 100%;
+    min-block-size: 2.9rem;
+    padding: 0.45rem 0.75rem;
+    border: 1px solid var(--ink-soft);
+    border-radius: var(--radius);
+    background: #fff;
+    color: var(--ink);
+  }
+  input[dir='ltr'] {
+    text-align: start;
+  }
+  :global([dir='rtl']) input[dir='ltr'] {
+    text-align: right;
+  }
+  input[aria-invalid='true'] {
+    border-color: var(--navy);
+    border-width: 2px;
+  }
+  .row {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  }
+  .choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+  }
+  .choice {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-weight: 400;
+    color: var(--ink);
+  }
+  .choice input {
+    inline-size: 1.15rem;
+    block-size: 1.15rem;
+    margin-top: 0.4rem;
+    accent-color: var(--navy);
+    flex: none;
+  }
+  .err {
+    margin: 0;
+    font-weight: 700;
+    font-size: var(--step--1);
+    color: var(--navy);
+  }
+  .err::before {
+    content: '— ';
+    color: var(--gold);
+  }
+  .errors {
+    border: 2px solid var(--navy);
+    border-radius: var(--radius);
+    padding: 0.75rem 1rem;
+    background: var(--shade);
+  }
+  .errors :global(ul) {
+    margin: 0;
+    padding-inline-start: 1.1rem;
+  }
+  .hp {
+    position: absolute;
+    inset-inline-start: -10000px;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+  }
+  .status {
+    margin: 0;
+    font-weight: 700;
+    min-block-size: 1.5em;
+  }
+  .btn {
+    justify-self: start;
+  }
+  :global(.done) {
+    display: grid;
+    gap: 0.5rem;
+  }
+</style>

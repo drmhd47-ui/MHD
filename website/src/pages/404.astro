@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+import { t } from '../i18n';
+const s = t.ar;
+const e = t.en;
+---
+
+<Base lang="ar" title={s.notFound.title} description={s.notFound.body} route="404" noindex>
+  <section class="section">
+    <div class="wrap nf">
+      <h1>{s.notFound.title}</h1>
+      <p>{s.notFound.body}</p>
+      <p><a class="btn btn--solid" href="/ar/">{s.notFound.home}</a></p>
+      <div lang="en" dir="ltr" class="en">
+        <h2>{e.notFound.title}</h2>
+        <p>{e.notFound.body}</p>
+        <p><a href="/en/">{e.notFound.home}</a></p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    text-align: center;
+  }
+  .en {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--line);
+  }
+</style>

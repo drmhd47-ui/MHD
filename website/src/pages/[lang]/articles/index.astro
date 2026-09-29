@@ -1,0 +1,67 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import { publishedArticles } from '../../../lib/articles';
+import { langs, path, t } from '../../../i18n';
+import type { Lang } from '../../../data/catalog';
+
+/** لا تُبنى صفحة المقالات للغة ليس فيها مقال معتمد، فلا تظهر صفحة فارغة لمحركات البحث. */
+export async function getStaticPaths() {
+  const out = [];
+  for (const lang of langs) if ((await publishedArticles(lang)).length) out.push({ params: { lang }, props: { lang } });
+  return out;
+}
+const { lang } = Astro.props as { lang: Lang };
+const s = t[lang];
+const list = await publishedArticles(lang);
+const fmt = new Intl.DateTimeFormat(lang === 'ar' ? 'ar-SA-u-ca-gregory-nu-latn' : 'en-GB', { dateStyle: 'long' });
+---
+
+<Base lang={lang} title={s.articles.title} description={s.articles.lead} route="articles" alternate={false}>
+  <PageHead
+    lang={lang}
+    title={s.articles.title}
+    lead={s.articles.lead}
+    crumbs={[
+      { label: s.nav.home, href: path(lang) },
+      { label: s.nav.articles, href: path(lang, 'articles') }
+    ]}
+  />
+  <section class="section">
+    <div class="wrap">
+      <ul class="list">
+        {
+          list.map((a) => (
+            <li class="card">
+              <h2>
+                <a href={path(lang, 'articles', a.id.replace(/\.md$/, ''))}>{a.data.title}</a>
+              </h2>
+              <p>{a.data.summary}</p>
+              <p class="meta">
+                {s.articles.published} <time datetime={a.data.publishedAt.toISOString().slice(0, 10)}>{fmt.format(a.data.publishedAt)}</time>
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+  }
+  h2 {
+    font-size: var(--step-1);
+  }
+  .meta {
+    margin: 0;
+    font-size: var(--step--1);
+    color: var(--ink-soft);
+  }
+</style>

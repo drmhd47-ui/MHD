@@ -1,0 +1,30 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import AxisList from '../../../components/AxisList.astro';
+import { langPaths } from '../../../lib/paths';
+import { path, t } from '../../../i18n';
+import type { Lang } from '../../../data/catalog';
+
+export const getStaticPaths = langPaths;
+const { lang } = Astro.props as { lang: Lang };
+const s = t[lang];
+---
+
+<Base lang={lang} title={s.services.title} description={s.services.lead} route="services">
+  <PageHead
+    lang={lang}
+    eyebrow={s.services.eyebrow}
+    title={s.services.title}
+    lead={s.services.lead}
+    crumbs={[
+      { label: s.nav.home, href: path(lang) },
+      { label: s.services.title, href: path(lang, 'services') }
+    ]}
+  />
+  <section class="section">
+    <div class="wrap">
+      <AxisList lang={lang} />
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,107 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import IntakeForm from '../../../components/IntakeForm.astro';
+import SocialIcon from '../../../components/SocialIcon.astro';
+import { langPaths } from '../../../lib/paths';
+import { company } from '../../../data/company';
+import { path, t } from '../../../i18n';
+import type { Lang } from '../../../data/catalog';
+
+export const getStaticPaths = langPaths;
+const { lang } = Astro.props as { lang: Lang };
+const s = t[lang];
+const c = s.contact;
+const wa = `https://wa.me/${company.whatsappNumber}?text=${encodeURIComponent(c.whatsappText)}`;
+---
+
+<Base lang={lang} title={c.title} description={c.lead} route="contact">
+  <PageHead
+    lang={lang}
+    eyebrow={c.eyebrow}
+    title={c.title}
+    lead={c.lead}
+    crumbs={[
+      { label: s.nav.home, href: path(lang) },
+      { label: s.nav.contact, href: path(lang, 'contact') }
+    ]}
+  />
+
+  <section class="section">
+    <div class="wrap layout">
+      <IntakeForm lang={lang} />
+
+      <aside class="channels" aria-labelledby="direct">
+        <h2 id="direct">{c.direct}</h2>
+        <dl>
+          <div>
+            <dt>{c.phone}</dt>
+            <dd><a class="ltr num" href={`tel:${company.phoneE164}`}>{company.phoneDisplay}</a></dd>
+          </div>
+          <div>
+            <dt>{c.email}</dt>
+            <dd><a class="ltr" href={`mailto:${company.email}`}>{company.email}</a></dd>
+          </div>
+          <div>
+            <dt>{c.address}</dt>
+            <dd>{company.address[lang]}</dd>
+          </div>
+          <div>
+            <dt>{c.hours}</dt>
+            <dd>{company.hours[lang]}</dd>
+          </div>
+        </dl>
+        <div class="quick">
+          <a class="btn btn--solid" href={`tel:${company.phoneE164}`}>{c.call}</a>
+          <a class="btn btn--ghost" href={wa} rel="noopener" target="_blank"><SocialIcon name="whatsapp" /> {c.whatsapp}</a>
+        </div>
+        <p class="note">{c.whatsappNote}</p>
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .layout {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    align-items: start;
+  }
+  .channels h2 {
+    font-size: var(--step-2);
+  }
+  dl {
+    margin: 0 0 1.25rem;
+    display: grid;
+    gap: 0.9rem;
+  }
+  dt {
+    font-size: var(--step--1);
+    color: var(--ink-soft);
+    font-weight: 700;
+  }
+  dd {
+    margin: 0;
+  }
+  .quick {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .quick .btn--ghost {
+    color: var(--navy);
+  }
+  .note {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    border-inline-start: 3px solid var(--gold);
+    background: var(--shade);
+    font-size: var(--step--1);
+  }
+  @media (max-width: 56rem) {
+    .layout {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,43 @@
+# الحزمة العامة: الموقع + خادم الاستقبال. تُنشر على خادم مستقل داخل المملكة، لا على خادم النظام الداخلي.
+#   docker compose -f deploy/public/docker-compose.yml --env-file deploy/public/.env up -d --build
+services:
+  web:
+    build:
+      context: ../..
+      dockerfile: website/Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./certs:/etc/nginx/certs:ro
+      - web-logs:/var/log/nginx
+    depends_on:
+      - intake
+    restart: unless-stopped
+
+  intake:
+    build:
+      context: ../..
+      dockerfile: intake/Dockerfile
+    environment:
+      INTAKE_ENCRYPTION_KEY: ${INTAKE_ENCRYPTION_KEY}
+      INTAKE_SHARED_SECRET: ${INTAKE_SHARED_SECRET}
+      INTERNAL_API_URL: ${INTERNAL_API_URL}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-https://www.mgrp.sa,https://mgrp.sa}
+      TRUST_PROXY: "1"
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-0}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+    volumes:
+      - intake-data:/data
+    # لا منفذ منشور: لا يُصل إليه إلا عبر nginx
+    expose:
+      - "8080"
+    restart: unless-stopped
+
+volumes:
+  web-logs:
+  intake-data:
