@@ -3,6 +3,7 @@ import Base from '../../../layouts/Base.astro';
 import PageHead from '../../../components/PageHead.astro';
 import People from '../../../components/People.astro';
 import TrackRecord from '../../../components/TrackRecord.astro';
+import WorkApproach from '../../../components/WorkApproach.astro';
 import { langPaths } from '../../../lib/paths';
 import { path, t } from '../../../i18n';
 import type { Lang } from '../../../data/catalog';
@@ -53,6 +54,8 @@ const a = s.about;
       </div>
     </div>
   </section>
+
+  <WorkApproach lang={lang} />
 
   <section class="section">
     <div class="wrap">

@@ -1,0 +1,154 @@
+---
+import { t } from '../i18n';
+import type { Lang } from '../data/catalog';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const w = t[lang].work;
+---
+
+<section class="section" aria-labelledby="principles">
+  <div class="wrap">
+    <h2 id="principles">{w.principlesTitle}</h2>
+    <p class="lead">{w.principlesLead}</p>
+    <ol class="grid grid--3 principles">
+      {
+        w.principles.map((p) => (
+          <li class="card">
+            <h3>{p.t}</h3>
+            <p>{p.d}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<section class="section section--shade" aria-labelledby="standards">
+  <div class="wrap two">
+    <div>
+      <h2 id="standards">{w.standardsTitle}</h2>
+      <p class="lead">{w.standardsLead}</p>
+      <dl class="standards">
+        {
+          w.standards.map((s) => (
+            <div>
+              <dt>{s.k}</dt>
+              <dd>{s.v}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+    <div>
+      <h2>{w.stepsTitle}</h2>
+      <ol class="steps">
+        {
+          w.steps.map((s) => (
+            <li>
+              <strong>{s.t}</strong>
+              <span>{s.d}</span>
+            </li>
+          ))
+        }
+      </ol>
+      <p class="resp">{w.responsibility}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .principles {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    counter-reset: p;
+  }
+  .principles li {
+    border-top: 3px solid var(--gold);
+  }
+  .principles h3 {
+    margin-bottom: 0.4rem;
+  }
+  .principles p {
+    margin: 0;
+    color: var(--ink-soft);
+  }
+  .two {
+    display: grid;
+    gap: 2.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+    align-items: start;
+  }
+  .standards {
+    margin: 0;
+    display: grid;
+    gap: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--cream);
+  }
+  .standards div {
+    display: grid;
+    grid-template-columns: minmax(0, 11rem) minmax(0, 1fr);
+    gap: 1rem;
+    padding: 0.8rem 1rem;
+  }
+  .standards div + div {
+    border-top: 1px solid var(--line);
+  }
+  .standards dt {
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .standards dd {
+    margin: 0;
+  }
+  .steps {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: s;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .steps li {
+    counter-increment: s;
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    column-gap: 0.75rem;
+  }
+  .steps li::before {
+    content: counter(s);
+    grid-row: span 2;
+    inline-size: 2.25rem;
+    block-size: 2.25rem;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    font-weight: 700;
+    color: var(--navy);
+    font-variant-numeric: tabular-nums;
+  }
+  .steps strong {
+    color: var(--navy);
+  }
+  .steps span {
+    color: var(--ink-soft);
+  }
+  .resp {
+    margin-top: 1.25rem;
+    padding: 0.75rem 1rem;
+    border-inline-start: 3px solid var(--navy);
+    background: var(--cream);
+  }
+  @media (max-width: 30rem) {
+    .standards div {
+      grid-template-columns: 1fr;
+      gap: 0.2rem;
+    }
+  }
+</style>

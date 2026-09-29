@@ -53,6 +53,37 @@ export const t = {
       missionTitle: 'رسالتنا',
       mission: 'تمكين الإدارة من اتخاذ القرار السليم في بيئة عمل آمنة ومستدامة، عبر منظومة قانونية متكاملة تجمع بين الخبرة القانونية والإدارة الاحترافية.'
     },
+    work: {
+      principlesTitle: 'مبادئ عملنا',
+      principlesLead: 'خمسة مبادئ تحكم عملنا في كل ملف، من الاستفسار الأول حتى التسليم.',
+      principles: [
+        { t: 'دقة نظامية', d: 'قبل أي رأي أو صياغة نراجع النص النافذ للنظام ولائحته من مصدره الرسمي، ونصرّح بما لم نتحقق منه بدل أن نفترضه.' },
+        { t: 'انضباط في المواعيد', d: 'نسجّل كل مهلة نظامية في نظام متابعة، ولكل مهلة مسؤول ونائب، ونسلّم المسودات قبل موعدها بمدة كافية.' },
+        { t: 'وضوح وشفافية', d: 'عقد أتعاب مكتوب يحدد النطاق وطريقة الحساب قبل البدء، وتقارير واضحة بحسب ما نتفق عليه.' },
+        { t: 'سرية ونزاهة', d: 'نفحص تعارض المصالح قبل قبول أي عمل، ونقصر الاطلاع على بياناتك على من يحتاجه فعلاً.' },
+        { t: 'صدق في التقدير', d: 'لا نقدّم وعوداً بنتائج القضايا، فتقدير النتائج بيد الجهات المختصة؛ وما نلتزم به هو الجهد والدقة والصراحة في تقييم الخيارات والمخاطر.' }
+      ],
+      standardsTitle: 'معايير الخدمة',
+      standardsLead: 'التزامات محددة في طريقة عملنا معك، لا وعود بنتائج.',
+      standards: [
+        { k: 'الرد على استفسارك', v: 'خلال يوم عمل واحد' },
+        { k: 'تقديم عرض الأتعاب', v: 'خلال ثلاثة أيام عمل من الاستشارة الأولية' },
+        { k: 'عقد الأتعاب المكتوب', v: 'يوقَّع قبل بدء العمل الجوهري' },
+        { k: 'المراجعة قبل التسليم', v: 'مراجعة ثانية لكل مخرج جوهري قبل إرساله إلى العميل أو إلى الجهات' },
+        { k: 'التخصصات المساندة', v: 'نستعين عند الحاجة بخبراء مرخّصين (كالمحاسبين القانونيين والمقيّمين المعتمدين والخبراء الفنيين)' },
+        { k: 'إطلاعك على المستجدات', v: 'بحسب الاتفاق: بعد كل جلسة أو بصورة دورية' }
+      ],
+      stepsTitle: 'كيف نعمل معك',
+      steps: [
+        { t: 'الاستقبال', d: 'تسجيل طلبك وفهم احتياجك، دون الدخول في التفاصيل السرية بعد.' },
+        { t: 'فحص التعارض والقبول', d: 'فحص تعارض المصالح، ثم قرار المحامي المرخّص بقبول العمل أو الاعتذار عنه.' },
+        { t: 'التقييم الأولي', d: 'دراسة الوقائع والمستندات وعرض الخيارات ومخاطر كل منها بصراحة.' },
+        { t: 'العقد', d: 'عرض أتعاب واضح وعقد مكتوب يحدد النطاق والالتزامات وطريقة الحساب.' },
+        { t: 'التنفيذ والمتابعة', d: 'العمل على ملفك بضوابط الجودة والمواعيد، وإطلاعك على تقدّمه.' },
+        { t: 'الإغلاق', d: 'تسليم المستندات وإقفال الملف وقياس رضاك.' }
+      ],
+      responsibility: 'يتولى المحامي المرخّص في الشركة الأعمال المهنية والقضائية ويتحمّل مسؤوليتها، ويدعمه فريق للإدارة والتنسيق.'
+    },
     people: {
       title: 'الشركاء والفريق',
       managing: 'الشريك الإداري',
@@ -202,6 +233,37 @@ export const t = {
       ],
       missionTitle: 'Our mission',
       mission: 'Enabling management to make sound decisions in a secure and sustainable business environment, through an integrated legal framework that combines legal expertise with professional management.'
+    },
+    work: {
+      principlesTitle: 'Our principles',
+      principlesLead: 'Five principles govern our work on every file, from the first enquiry to final delivery.',
+      principles: [
+        { t: 'Regulatory accuracy', d: 'Before any opinion or draft we check the law and its regulations in force from the official source, and we state openly what we have not verified rather than assume it.' },
+        { t: 'Deadline discipline', d: 'Every statutory deadline is logged in a tracking system with an owner and a deputy, and drafts are delivered well ahead of the due date.' },
+        { t: 'Clarity and transparency', d: 'A written fee agreement setting out scope and basis of charging before we start, and clear reporting as agreed.' },
+        { t: 'Confidentiality and integrity', d: 'We check for conflicts of interest before accepting any work and limit access to your data to those who need it.' },
+        { t: 'Honest assessment', d: 'We make no promises about case outcomes, which rest with the competent authorities; our commitment is effort, accuracy and candour about options and risks.' }
+      ],
+      standardsTitle: 'Service standards',
+      standardsLead: 'Specific commitments on how we work with you, not promises of outcomes.',
+      standards: [
+        { k: 'Responding to your enquiry', v: 'Within one business day' },
+        { k: 'Fee proposal', v: 'Within three business days of the initial consultation' },
+        { k: 'Written fee agreement', v: 'Signed before substantive work begins' },
+        { k: 'Review before delivery', v: 'A second review of every substantive deliverable before it is sent to you or to any authority' },
+        { k: 'Supporting specialists', v: 'Licensed experts engaged where needed (such as chartered accountants, accredited valuers and technical experts)' },
+        { k: 'Keeping you informed', v: 'As agreed: after each hearing or periodically' }
+      ],
+      stepsTitle: 'How we work with you',
+      steps: [
+        { t: 'Intake', d: 'Recording your request and understanding your needs, without going into confidential details yet.' },
+        { t: 'Conflict check and acceptance', d: 'A conflict-of-interest check, then the licensed lawyer’s decision to accept or decline the work.' },
+        { t: 'Initial assessment', d: 'Reviewing facts and documents and setting out the options and the risks of each candidly.' },
+        { t: 'Engagement', d: 'A clear fee proposal and a written agreement setting out scope, obligations and basis of charging.' },
+        { t: 'Execution and follow-up', d: 'Working on your file under quality and deadline controls, and keeping you informed.' },
+        { t: 'Closing', d: 'Handing over documents, closing the file and measuring your satisfaction.' }
+      ],
+      responsibility: 'The firm’s licensed lawyer carries out and is responsible for all professional and judicial work, supported by an administration and coordination team.'
     },
     people: {
       title: 'Partners & team',
