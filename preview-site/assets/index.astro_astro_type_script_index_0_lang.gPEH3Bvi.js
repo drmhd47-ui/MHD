@@ -1,0 +1,1 @@
+const e=new URLSearchParams(location.search).get("ref");e&&/^[A-Z0-9-]{6,20}$/.test(e)&&(document.querySelector("[data-ref]").textContent=e,document.querySelector("[data-ref-line]").removeAttribute("hidden"));
